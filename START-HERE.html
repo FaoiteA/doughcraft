@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Welcome to DoughCraft — Start Here</title>
+<link rel="icon" type="image/png" href="icons/icon-192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #F5F1EA;
+  --surface: #FFFFFF;
+  --surface-alt: #FBF8F2;
+  --sage: #8A9A7B;
+  --sage-dark: #5C6B4F;
+  --sage-soft: #D6DDCB;
+  --text: #2E2A26;
+  --text-muted: #7A736C;
+  --divider: #E8E2D6;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+.hero {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.hero img.logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(46, 42, 38, 0.08);
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: var(--sage-dark);
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+.hero p.tagline {
+  font-size: 17px;
+  color: var(--text-muted);
+}
+.section {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(46, 42, 38, 0.04);
+}
+.section h2 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+.section h3 {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 22px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.section p { margin-bottom: 12px; color: var(--text); }
+.section ol, .section ul { margin-left: 22px; margin-bottom: 14px; }
+.section li { margin-bottom: 6px; }
+.launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 32px;
+  background: var(--sage);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 17px;
+  border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(92, 107, 79, 0.25);
+  transition: transform 0.1s ease, background 0.2s ease;
+  margin-top: 8px;
+}
+.launch-btn:hover { background: var(--sage-dark); }
+.launch-btn:active { transform: scale(0.98); }
+.launch-btn svg { width: 20px; height: 20px; }
+.launch-wrap {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+.device-block {
+  border-left: 3px solid var(--sage-soft);
+  padding: 4px 0 4px 16px;
+  margin-bottom: 20px;
+}
+.device-block:last-child { margin-bottom: 0; }
+.device-block h3 { margin-top: 0; }
+.tip {
+  background: var(--surface-alt);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 18px;
+  border-left: 3px solid var(--sage);
+}
+.tip strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--sage-dark);
+}
+.tip p { margin: 0; font-size: 14px; color: var(--text); }
+.alarm-note {
+  background: #FDF6E3;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 18px;
+  border-left: 3px solid #B78A2A;
+}
+.alarm-note strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #6E5416;
+}
+.alarm-note p { color: #6E5416; font-size: 14px; margin: 0; }
+.faq details {
+  border-bottom: 1px solid var(--divider);
+  padding: 14px 0;
+}
+.faq details:last-child { border-bottom: none; }
+.faq summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text);
+  outline: none;
+  padding: 4px 0;
+}
+.faq details[open] summary { color: var(--sage-dark); }
+.faq details p {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--text);
+}
+.footer {
+  text-align: center;
+  padding-top: 40px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.footer p { margin-bottom: 6px; }
+code {
+  background: var(--surface-alt);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Menlo', 'Monaco', monospace;
+  font-size: 13px;
+  color: var(--sage-dark);
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="hero">
+    <img class="logo" src="icons/icon-192.png" alt="DoughCraft" />
+    <h1>Welcome to DoughCraft</h1>
+    <p class="tagline">Bread &amp; Pizza. Made Simple.</p>
+  </div>
+
+  <div class="section">
+    <h2>Open the app</h2>
+    <p>DoughCraft runs entirely on your device — no accounts, no cloud, no ads. Tap below to launch it. Bookmark the app or install it to your home screen for one-tap access.</p>
+    <div class="launch-wrap">
+      <a class="launch-btn" href="index.html">
+        Open DoughCraft
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Install it like a real app</h2>
+    <p>Install DoughCraft to your home screen so it opens like any other app — no browser bar, no clutter.</p>
+
+    <div class="device-block">
+      <h3>On Android (Chrome)</h3>
+      <ol>
+        <li>Open <code>index.html</code> in Chrome</li>
+        <li>Tap the <strong>three-dot menu</strong> in the top right</li>
+        <li>Tap <strong>Install app</strong> (or <strong>Add to Home Screen</strong>)</li>
+        <li>Confirm — DoughCraft appears on your home screen</li>
+      </ol>
+    </div>
+
+    <div class="device-block">
+      <h3>On iPhone / iPad (Safari)</h3>
+      <ol>
+        <li>Open <code>index.html</code> in Safari</li>
+        <li>Tap the <strong>Share</strong> button (square with arrow at the bottom)</li>
+        <li>Scroll down and tap <strong>Add to Home Screen</strong></li>
+        <li>Tap <strong>Add</strong> — DoughCraft appears as an app icon</li>
+      </ol>
+    </div>
+
+    <div class="device-block">
+      <h3>On desktop (Windows / Mac / Linux)</h3>
+      <ol>
+        <li>Double-click <code>index.html</code> — it opens in your default browser</li>
+        <li>Bookmark it or pin the tab for quick access</li>
+        <li>Chrome and Edge also let you install it: click the <strong>install icon</strong> in the address bar</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Your first bake</h2>
+    <ol>
+      <li>Tap a recipe — try <strong>Same-Day Pan Pizza</strong> for a quick weeknight bake, or <strong>Focaccia</strong> for a beginner-friendly loaf</li>
+      <li>Read the ingredients and method — for pizza, use the calculator to scale for the number of balls and size you want</li>
+      <li>Tap <strong>Start Recipe</strong>, pick when you want to eat, and the app builds your entire timeline backwards from that moment</li>
+      <li>Follow along step by step — the ring counts down each step and tells you exactly what to do</li>
+      <li>When you're done, log the bake with a rating and notes so you can compare next time</li>
+    </ol>
+
+    <div class="alarm-note">
+      <strong>About long ferments</strong>
+      <p>Bulk fermentations, cold retards, and overnight ferments can run 8+ hours. Your phone will sleep during that time — the app can't wake it up. For any step longer than 2 hours, DoughCraft will show a card asking you to set a phone alarm as a backup. Do it. It takes 15 seconds and saves your dough.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Your data stays yours</h2>
+    <p>Everything you log — bakes, ratings, notes, favorites — is saved on your device only. There's no account, no server, no cloud sync. That means it's private, but it also means you're responsible for backing it up.</p>
+
+    <h3>To back up your journal</h3>
+    <p>Open the app → <strong>Profile</strong> tab → <strong>Export journal</strong>. This downloads a JSON file with everything. Save it to Google Drive, iCloud, email it to yourself — whatever you trust.</p>
+
+    <h3>To restore</h3>
+    <p><strong>Profile</strong> → <strong>Import journal</strong> → pick your JSON file. All your data comes back.</p>
+
+    <div class="tip">
+      <strong>Tip</strong>
+      <p>Back up once a month. It takes 10 seconds and it's the only way to move your journal to a new phone or recover if you clear your browser data.</p>
+    </div>
+  </div>
+
+  <div class="section faq">
+    <h2>Common questions</h2>
+
+    <details>
+      <summary>Do I need internet to use DoughCraft?</summary>
+      <p>No. Once you've opened it once, it runs entirely offline. Recipes, timers, calculators — everything works without a connection.</p>
+    </details>
+
+    <details>
+      <summary>Will DoughCraft wake my phone during an overnight ferment?</summary>
+      <p>No. Web apps can't wake phones — only native apps installed from the Play Store or App Store can do that. For long ferments, use the "Copy time" button on the alarm card and set a native phone alarm as backup.</p>
+    </details>
+
+    <details>
+      <summary>Can I use DoughCraft on multiple devices?</summary>
+      <p>Yes. Copy the folder to any device and open <code>index.html</code>. Each device has its own separate journal — use Export / Import to sync bakes between them.</p>
+    </details>
+
+    <details>
+      <summary>Will I get updates?</summary>
+      <p>Yes. When new features or recipes ship, you'll get an email from Gumroad. Download the new ZIP and replace your files — your bake journal stays intact if you export/import it.</p>
+    </details>
+
+    <details>
+      <summary>The calculator amounts look odd for tiny quantities (yeast, salt)</summary>
+      <p>Small amounts round to one decimal (e.g. 0.4g yeast). For quantities under 5g, use a precision scale if you have one — a normal kitchen scale usually reads in whole grams. If your scale doesn't show decimals, round up — a tiny bit extra yeast or salt won't ruin a bake.</p>
+    </details>
+
+    <details>
+      <summary>Can I add my own recipes?</summary>
+      <p>Not in this version — DoughCraft ships with a curated library of tested recipes. Custom recipes are on the roadmap for future updates.</p>
+    </details>
+  </div>
+
+  <div class="section">
+    <h2>Support</h2>
+    <p>Something broken? A recipe not working out? Suggestion? Email <strong>faoiteapps@gmail.com</strong> — I read every message.</p>
+    <p>If you're loving DoughCraft, leave a review on Gumroad. It genuinely helps small indie developers like me keep building.</p>
+  </div>
+
+  <div class="footer">
+    <p>DoughCraft v1.0.0 · Built by FaoiteApps</p>
+    <p>Made with real dough, patience, and probably too much coffee.</p>
+  </div>
+
+</div>
+</body>
+</html>
