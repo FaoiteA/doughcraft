@@ -1776,7 +1776,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--text)
       <div class="alarm-body">
         <div class="alarm-title">Set a phone alarm as backup</div>
         <div class="alarm-text">This step ends at <strong id="alarm-time"></strong>. Your phone will sleep — set a native alarm so you don't miss it.</div>
-        <button class="alarm-btn" onclick="setBackupAlarm()">Set alarm for <span id="alarm-btn-time"></span></button>
+        <button class="alarm-btn" onclick="setBackupAlarm()">Copy time <span id="alarm-btn-time"></span></button>
       </div>
     </div>
     <div class="timer-actions">
@@ -2778,22 +2778,18 @@ function setBackupAlarm() {
   const endTime = new Date(step.stepEndAt + activeBake.pauseAccumMs);
   const hh = String(endTime.getHours()).padStart(2, '0');
   const mm = String(endTime.getMinutes()).padStart(2, '0');
-  const timeStr = endTime.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const timeStr = `${hh}:${mm}`;
   const stepName = step.name;
 
-  // Try Android alarm intent — opens Clock app pre-filled
-  const androidUA = /Android/i.test(navigator.userAgent);
-  if (androidUA) {
-    // Intent URL scheme for Android alarm
-    const url = `intent://alarm/setalarm?hour=${endTime.getHours()}&minutes=${endTime.getMinutes()}&message=${encodeURIComponent('DoughCraft: ' + stepName)}#Intent;scheme=android-app;package=com.android.deskclock;end`;
-    window.location.href = url;
-    // Fallback message after short delay if intent doesn't fire
-    setTimeout(() => {
-      alert(`Couldn't open your Clock app automatically. Set a manual alarm for ${timeStr} — "${stepName}".`);
-    }, 800);
+  // Copy the time to clipboard so buyer can paste into their Clock app
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(timeStr).then(() => {
+      alert(`${timeStr} copied to clipboard.\n\nOpen your phone's Clock app and set an alarm for this time — label it "${stepName}" so you know why it's ringing.`);
+    }).catch(() => {
+      alert(`Set a phone alarm for:\n\n${timeStr} — "${stepName}"\n\nOpen your Clock app and add this alarm.`);
+    });
   } else {
-    // iOS and everything else — show clear instructions to set manually
-    alert(`Set a phone alarm for:\n\n${hh}:${mm} — "${stepName}"\n\nOpen your Clock app and add this alarm so you don't miss the step.`);
+    alert(`Set a phone alarm for:\n\n${timeStr} — "${stepName}"\n\nOpen your Clock app and add this alarm.`);
   }
 }
 
