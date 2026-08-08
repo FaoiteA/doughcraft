@@ -322,6 +322,53 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--text)
 }
 .tab.active { background: var(--sage); color: white; border-color: var(--sage); }
 
+/* -- Search bar -- */
+.search-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 16px;
+}
+.search-bar.open { display: flex; }
+.search-bar svg { width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0; }
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--text);
+}
+.search-bar input::placeholder { color: var(--text-muted); }
+.search-clear {
+  background: transparent;
+  color: var(--text-muted);
+  padding: 4px;
+  cursor: pointer;
+  display: none;
+}
+.search-bar.has-value .search-clear { display: block; }
+
+/* -- Favorite heart states -- */
+.rd-fave.fav-active {
+  background: rgba(217, 90, 90, 0.15);
+  color: #D95A5A;
+}
+.rd-fave svg.fav-filled { fill: #D95A5A; stroke: #D95A5A; }
+.recipe-card .fav-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #D95A5A;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+.recipe-card { position: relative; }
+
 .recipe-card {
   display: flex;
   align-items: center;
@@ -1344,8 +1391,16 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--text)
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
       </button>
       <h1>Recipes</h1>
-      <button class="icon-btn" aria-label="Search">
+      <button class="icon-btn" onclick="toggleSearch()" aria-label="Search">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+
+    <div class="search-bar" id="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search-input" placeholder="Search recipes" oninput="onSearchInput(this.value)" />
+      <button class="search-clear" onclick="clearSearch()" aria-label="Clear">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
       </button>
     </div>
 
@@ -1473,8 +1528,8 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--text)
       <button class="rd-back" onclick="go('recipes')" aria-label="Back">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
       </button>
-      <button class="rd-fave" aria-label="Favorite">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <button class="rd-fave" id="rd-fave-btn" onclick="toggleFavorite()" aria-label="Favorite">
+        <svg id="rd-fave-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
     </div>
     <div class="rd-body">
@@ -1881,7 +1936,7 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--text)
       <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 L11 3 L19 10 L19 18 L14 18 L14 13 L8 13 L8 18 L3 18 Z"/></svg>
       Home
     </button>
-    <button class="nav-btn" data-screen="recipes" onclick="go('recipes')">
+    <button class="nav-btn" data-screen="recipes" onclick="openRecipesFiltered('all')">
       <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L17 3 L17 19 L5 19 Z"/><path d="M8 7 L14 7 M8 11 L14 11 M8 15 L12 15"/></svg>
       Recipes
     </button>
@@ -2424,6 +2479,7 @@ function go(screen) {
   if (screen === 'home') refreshHomeContinue();
   if (screen === 'timers') renderBakes();
   if (screen === 'profile') refreshProfile();
+  if (screen === 'recipes') refreshRecipeFavBadges();
   window.scrollTo(0, 0);
 }
 
@@ -2438,6 +2494,9 @@ function openRecipe(id) {
   document.getElementById('rd-desc').textContent = r.desc;
   document.getElementById('rd-prep').textContent = r.prep;
   document.getElementById('rd-rest').textContent = r.rest;
+
+  // Update favorite button state
+  refreshFavButton(id);
 
   // Calculator setup for pizza recipes
   const calcEl = document.getElementById('rd-calculator');
@@ -2465,6 +2524,92 @@ function openRecipe(id) {
   ).join('');
 
   go('recipe-detail');
+}
+
+// ============================================================
+// Favorites
+// ============================================================
+function getFavorites() {
+  try {
+    return JSON.parse(localStorage.getItem('doughcraft-favorites') || '[]');
+  } catch (e) { return []; }
+}
+function saveFavorites(favs) {
+  localStorage.setItem('doughcraft-favorites', JSON.stringify(favs));
+}
+function isFavorite(id) {
+  return getFavorites().includes(id);
+}
+function toggleFavorite() {
+  if (!wizard.recipeId) return;
+  const favs = getFavorites();
+  const idx = favs.indexOf(wizard.recipeId);
+  if (idx >= 0) favs.splice(idx, 1);
+  else favs.push(wizard.recipeId);
+  saveFavorites(favs);
+  refreshFavButton(wizard.recipeId);
+}
+function refreshFavButton(id) {
+  const btn = document.getElementById('rd-fave-btn');
+  const icon = document.getElementById('rd-fave-icon');
+  if (!btn || !icon) return;
+  const fav = isFavorite(id);
+  btn.classList.toggle('fav-active', fav);
+  icon.classList.toggle('fav-filled', fav);
+}
+function refreshRecipeFavBadges() {
+  const favs = getFavorites();
+  const heartSVG = '<svg class="fav-badge" width="18" height="18" viewBox="0 0 24 24" fill="#D95A5A" stroke="#D95A5A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>';
+  document.querySelectorAll('#screen-recipes .recipe-card').forEach(card => {
+    // Extract recipe id from onclick
+    const onclickStr = card.getAttribute('onclick') || '';
+    const match = onclickStr.match(/openRecipe\('([^']+)'\)/);
+    const id = match ? match[1] : null;
+    // Remove any existing badge
+    const oldBadge = card.querySelector('.fav-badge');
+    if (oldBadge) oldBadge.remove();
+    if (id && favs.includes(id)) {
+      card.insertAdjacentHTML('beforeend', heartSVG);
+    }
+  });
+}
+
+// ============================================================
+// Search
+// ============================================================
+function toggleSearch() {
+  const bar = document.getElementById('search-bar');
+  const opening = !bar.classList.contains('open');
+  bar.classList.toggle('open');
+  if (opening) {
+    document.getElementById('search-input').focus();
+  } else {
+    clearSearch();
+  }
+}
+function onSearchInput(val) {
+  const bar = document.getElementById('search-bar');
+  bar.classList.toggle('has-value', val.length > 0);
+  applySearchAndFilter();
+}
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-bar').classList.remove('has-value');
+  applySearchAndFilter();
+}
+function applySearchAndFilter() {
+  const query = document.getElementById('search-input').value.trim().toLowerCase();
+  const activeTab = document.querySelector('#screen-recipes .tab.active');
+  const filter = activeTab ? activeTab.dataset.filter : 'all';
+  document.querySelectorAll('#screen-recipes .recipe-card').forEach(card => {
+    const cat = card.dataset.category;
+    const tags = (card.dataset.tags || '').split(',');
+    const filterMatch = filter === 'all' || cat === filter || tags.includes(filter);
+    const title = card.querySelector('h4').textContent.toLowerCase();
+    const desc = card.querySelector('.desc').textContent.toLowerCase();
+    const searchMatch = !query || title.includes(query) || desc.includes(query);
+    card.style.display = (filterMatch && searchMatch) ? 'flex' : 'none';
+  });
 }
 
 function renderRecipeAmounts(r) {
@@ -2527,15 +2672,18 @@ function filterRecipes(filter) {
   document.querySelectorAll('#screen-recipes .tab').forEach(t => {
     t.classList.toggle('active', t.dataset.filter === filter);
   });
-  document.querySelectorAll('#screen-recipes .recipe-card').forEach(card => {
-    const cat = card.dataset.category;
-    const tags = (card.dataset.tags || '').split(',');
-    const match = filter === 'all' || cat === filter || tags.includes(filter);
-    card.style.display = match ? 'flex' : 'none';
-  });
+  applySearchAndFilter();
 }
 
 function openRecipesFiltered(filter) {
+  // Reset search when navigating to Recipes fresh
+  const bar = document.getElementById('search-bar');
+  if (bar) {
+    bar.classList.remove('open');
+    bar.classList.remove('has-value');
+    const input = document.getElementById('search-input');
+    if (input) input.value = '';
+  }
   go('recipes');
   filterRecipes(filter);
 }
