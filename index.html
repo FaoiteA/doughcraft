@@ -1411,6 +1411,60 @@ h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--text)
         <div class="desc">Soft, healthy &amp; wholesome.</div>
       </div>
     </div>
+
+    <div class="recipe-card" data-category="bread" onclick="openRecipe('focaccia')">
+      <div class="thumb" style="background-image: url('photos/recipe-focaccia.png')"></div>
+      <div class="info">
+        <h4>Focaccia Bread</h4>
+        <div class="type">Bread · Easy</div>
+        <div class="desc">Rosemary, olive oil, flaky salt.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="bread" onclick="openRecipe('ciabatta')">
+      <div class="thumb" style="background-image: url('photos/recipe-ciabatta.png')"></div>
+      <div class="info">
+        <h4>Ciabatta Loaves</h4>
+        <div class="type">Bread · Intermediate</div>
+        <div class="desc">Crackling crust, holey crumb.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="bread" data-tags="sourdough" onclick="openRecipe('sourdoughsandwich')">
+      <div class="thumb" style="background-image: url('photos/recipe-sourdoughsandwich.png')"></div>
+      <div class="info">
+        <h4>Sourdough Sandwich Loaf</h4>
+        <div class="type">Bread · Sourdough</div>
+        <div class="desc">Everyday sourdough, tin-shaped.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="bread" onclick="openRecipe('bagels')">
+      <div class="thumb" style="background-image: url('photos/recipe-bagels.png')"></div>
+      <div class="info">
+        <h4>Homemade Bagels</h4>
+        <div class="type">Bread · Intermediate</div>
+        <div class="desc">Chewy, boiled &amp; baked.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="pizza" data-tags="sourdough" onclick="openRecipe('sourdoughpizza')">
+      <div class="thumb" style="background-image: url('photos/recipe-sourdoughpizza.png')"></div>
+      <div class="info">
+        <h4>Sourdough Pizza</h4>
+        <div class="type">Pizza · Sourdough · Advanced</div>
+        <div class="desc">Natural leaven, deep flavour.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="pizza" onclick="openRecipe('detroitpizza')">
+      <div class="thumb" style="background-image: url('photos/recipe-detroit.png')"></div>
+      <div class="info">
+        <h4>Detroit Style Pizza</h4>
+        <div class="type">Pizza · Intermediate</div>
+        <div class="desc">Deep-dish, frico crust edges.</div>
+      </div>
+    </div>
   </div>
 
   <!-- ================= RECIPE DETAIL ================= -->
@@ -2092,6 +2146,255 @@ const RECIPES = {
       { name: 'Preheat oven',       minutes: 30,  tempSensitive: false, parallel: true },
       { name: 'Final proof',        minutes: 60,  tempSensitive: true  },
       { name: 'Bake',               minutes: 35,  tempSensitive: false }
+    ]
+  },
+  focaccia: {
+    title: 'Focaccia',
+    accent: 'Bread',
+    hero: 'photos/recipe-focaccia.png',
+    category: 'bread',
+    desc: 'Pillowy, olive-oil-drenched Italian flatbread with a golden crust and airy dimpled interior. Rosemary and flaky salt make it irresistible.',
+    prep: '20m',
+    rest: '5h',
+    makes: 'Makes 1 large tray',
+    hasColdFerment: false,
+    ingredients: [
+      { name: 'Bread Flour',      amount: '500g', icon: 'flour' },
+      { name: 'Warm Water',       amount: '400g', icon: 'water' },
+      { name: 'Olive Oil',        amount: '40g',  icon: 'oil' },
+      { name: 'Salt',             amount: '12g',  icon: 'salt' },
+      { name: 'Instant Yeast',    amount: '5g',   icon: 'yeast' },
+      { name: 'Rosemary & flaky salt (to top)', amount: 'to taste', icon: 'salt' }
+    ],
+    method: [
+      'Combine warm water and yeast. Let sit 5 minutes until foamy.',
+      'Add flour, salt, and 20g of the olive oil. Mix until dough comes together — sticky is good.',
+      'Cover and rest 30 minutes. Then perform 4 sets of stretch and folds every 30 minutes in the bowl.',
+      'After the last fold, cover and bulk ferment 2 hours at room temperature until doubled.',
+      'Coat a large baking tray generously with the remaining olive oil.',
+      'Transfer dough to the tray. Gently stretch to fill the tray — don\'t force it.',
+      'Cover and proof 45–60 minutes until visibly puffy.',
+      'Preheat oven to 230°C (450°F).',
+      'Dimple the dough all over with oiled fingertips. Drizzle with more olive oil, scatter rosemary and flaky salt.',
+      'Bake 20–25 minutes until deeply golden. Slide out of the tray onto a rack to keep the bottom crisp.',
+      'Best served warm the same day.'
+    ],
+    steps: [
+      { name: 'Mix dough',          minutes: 15,  tempSensitive: false },
+      { name: 'Stretch and folds',  minutes: 120, tempSensitive: true  },
+      { name: 'Bulk fermentation',  minutes: 120, tempSensitive: true  },
+      { name: 'Shape in tray',      minutes: 10,  tempSensitive: false },
+      { name: 'Final proof',        minutes: 60,  tempSensitive: true  },
+      { name: 'Preheat oven',       minutes: 30,  tempSensitive: false, parallel: true },
+      { name: 'Bake',               minutes: 25,  tempSensitive: false }
+    ]
+  },
+  ciabatta: {
+    title: 'Ciabatta',
+    accent: 'Loaves',
+    hero: 'photos/recipe-ciabatta.png',
+    category: 'bread',
+    desc: 'Rustic Italian slipper-shaped loaves with a crackling crust and famously open, holey crumb. High hydration means minimal handling and maximum reward.',
+    prep: '15m',
+    rest: '4h',
+    makes: 'Makes 2 loaves',
+    hasColdFerment: false,
+    ingredients: [
+      { name: 'Bread Flour',       amount: '500g', icon: 'flour' },
+      { name: 'Water (room temp)', amount: '400g', icon: 'water' },
+      { name: 'Salt',              amount: '10g',  icon: 'salt' },
+      { name: 'Instant Yeast',     amount: '3g',   icon: 'yeast' },
+      { name: 'Olive Oil',         amount: '15g',  icon: 'oil' }
+    ],
+    method: [
+      'Combine flour, water, and yeast in a bowl. Mix until no dry flour remains.',
+      'Cover and rest 20 minutes (autolyse).',
+      'Add salt and olive oil. Mix by pinching and folding in the bowl for 3 minutes.',
+      'Cover and bulk ferment 2.5 hours. Perform 4 stretch and folds every 30 minutes in the first 2 hours.',
+      'Turn dough onto a heavily floured surface. It will be very wet — do not knead.',
+      'Divide into 2 rough rectangles with a bench scraper. Handle as little as possible to preserve the air.',
+      'Transfer each to a floured piece of parchment. Cover and proof 45 minutes.',
+      'Preheat oven with a baking stone or steel at 240°C (475°F) for 45 minutes. Place an empty tray on the bottom.',
+      'Slide loaves (on parchment) onto the hot stone. Pour a cup of hot water into the empty tray for steam.',
+      'Bake 22–25 minutes until deep golden with a crackling crust.',
+      'Cool completely on a rack before slicing — the crumb is still setting.'
+    ],
+    steps: [
+      { name: 'Mix + autolyse',     minutes: 25,  tempSensitive: false },
+      { name: 'Add salt & fold',    minutes: 5,   tempSensitive: false },
+      { name: 'Bulk + folds',       minutes: 150, tempSensitive: true  },
+      { name: 'Divide and shape',   minutes: 10,  tempSensitive: false },
+      { name: 'Final proof',        minutes: 45,  tempSensitive: true  },
+      { name: 'Preheat oven',       minutes: 45,  tempSensitive: false, parallel: true },
+      { name: 'Bake',               minutes: 25,  tempSensitive: false }
+    ]
+  },
+  sourdoughsandwich: {
+    title: 'Sourdough Sandwich',
+    accent: 'Loaf',
+    hero: 'photos/recipe-sourdoughsandwich.png',
+    category: 'bread',
+    tags: ['sourdough'],
+    desc: 'A soft, tin-shaped sourdough sandwich loaf — everyday sourdough for the everyday table. Uses an active starter with a touch of milk and honey.',
+    prep: '25m',
+    rest: '18h',
+    makes: 'Makes 1 loaf',
+    hasColdFerment: true,
+    ingredients: [
+      { name: 'Bread Flour',           amount: '450g', icon: 'flour' },
+      { name: 'Milk (warmed)',         amount: '270g', icon: 'water' },
+      { name: 'Active Sourdough Starter', amount: '90g', icon: 'starter' },
+      { name: 'Honey',                 amount: '30g',  icon: 'honey' },
+      { name: 'Butter (softened)',     amount: '30g',  icon: 'oil' },
+      { name: 'Salt',                  amount: '9g',   icon: 'salt' }
+    ],
+    method: [
+      'Make sure your starter is active and bubbly — fed 4–6 hours before.',
+      'Combine warm milk, starter, honey, and softened butter in a bowl.',
+      'Add flour and salt. Mix until dough comes together.',
+      'Knead 8–10 minutes until smooth and elastic. The dough should be soft and slightly tacky.',
+      'Cover and bulk ferment 4–5 hours at room temperature, with one stretch and fold at 1 hour.',
+      'Shape into a log and place seam-down in an oiled 9×5 inch loaf tin.',
+      'Cover and cold retard in the fridge for 8–12 hours (or overnight).',
+      'Remove from fridge 1 hour before baking to warm up. Meanwhile preheat oven to 190°C (375°F).',
+      'Bake for 40–45 minutes until deep golden. Internal temperature should reach 96°C.',
+      'Turn out onto a wire rack. Cool completely before slicing.'
+    ],
+    steps: [
+      { name: 'Mix and knead',      minutes: 25,   tempSensitive: false },
+      { name: 'Bulk fermentation',  minutes: 270,  tempSensitive: true  },
+      { name: 'Shape in tin',       minutes: 10,   tempSensitive: false },
+      { name: 'Cold retard',        minutes: 600,  tempSensitive: false, coldFerment: true },
+      { name: 'Warm up',            minutes: 60,   tempSensitive: false },
+      { name: 'Preheat oven',       minutes: 30,   tempSensitive: false, parallel: true },
+      { name: 'Bake',               minutes: 45,   tempSensitive: false }
+    ]
+  },
+  bagels: {
+    title: 'Homemade',
+    accent: 'Bagels',
+    hero: 'photos/recipe-bagels.png',
+    category: 'bread',
+    desc: 'Chewy, dense-crumbed New York style bagels with a shiny crust. Boiled then baked — the way it should be.',
+    prep: '30m',
+    rest: '14h',
+    makes: 'Makes 6 bagels',
+    hasColdFerment: true,
+    ingredients: [
+      { name: 'Bread Flour (high gluten)', amount: '500g', icon: 'flour' },
+      { name: 'Water (warm)',              amount: '260g', icon: 'water' },
+      { name: 'Salt',                      amount: '10g',  icon: 'salt' },
+      { name: 'Instant Yeast',             amount: '4g',   icon: 'yeast' },
+      { name: 'Honey or Barley Malt',      amount: '15g',  icon: 'honey' },
+      { name: 'Baking Soda (for boiling)', amount: '30g',  icon: 'salt' }
+    ],
+    method: [
+      'Combine water, yeast, and honey. Let sit 5 minutes until foamy.',
+      'Add flour and salt. Mix, then knead 10–12 minutes — the dough will be quite stiff.',
+      'Cover and bulk ferment 1 hour at room temperature.',
+      'Divide into 6 equal pieces. Shape each into a tight ball, then poke a hole through the middle with your thumb and stretch to a ring.',
+      'Place on floured parchment. Cover and cold ferment in the fridge for 8–12 hours.',
+      'Preheat oven to 220°C (425°F). Bring a large pot of water to boil, add baking soda.',
+      'Boil bagels 60 seconds per side. Don\'t crowd the pot.',
+      'Transfer to a lined baking tray. Add toppings now if desired (seeds, salt, everything mix).',
+      'Bake 20–22 minutes until deep golden brown.',
+      'Cool on a rack — they\'re best still slightly warm, but great next day too.'
+    ],
+    steps: [
+      { name: 'Mix and knead',      minutes: 25,   tempSensitive: false },
+      { name: 'Bulk fermentation',  minutes: 60,   tempSensitive: true  },
+      { name: 'Divide and shape',   minutes: 20,   tempSensitive: false },
+      { name: 'Cold ferment',       minutes: 600,  tempSensitive: false, coldFerment: true },
+      { name: 'Boil bagels',        minutes: 15,   tempSensitive: false },
+      { name: 'Preheat oven',       minutes: 20,   tempSensitive: false, parallel: true },
+      { name: 'Bake',               minutes: 22,   tempSensitive: false }
+    ]
+  },
+  sourdoughpizza: {
+    title: 'Sourdough',
+    accent: 'Pizza',
+    hero: 'photos/recipe-sourdoughpizza.png',
+    category: 'pizza',
+    tags: ['sourdough'],
+    desc: 'Naturally leavened pizza dough with the tang of sourdough and the crackling crust of Neapolitan. Uses an active starter, no commercial yeast.',
+    prep: '25m',
+    rest: '30h',
+    makes: 'Makes 2 dough balls',
+    hasColdFerment: true,
+    calculator: {
+      ballWeights: { '9': 240, '12': 290, '14': 330 },
+      bakersPct: { flour: 100, water: 65, starter: 20, salt: 2.5 },
+      defaultBalls: 2,
+      defaultSize: '12'
+    },
+    ingredients: [
+      { name: '"00" or Bread Flour', calcKey: 'flour',   unit: 'g', icon: 'flour' },
+      { name: 'Water (room temp)',   calcKey: 'water',   unit: 'g', icon: 'water' },
+      { name: 'Active Sourdough Starter', calcKey: 'starter', unit: 'g', icon: 'starter' },
+      { name: 'Salt',                calcKey: 'salt',    unit: 'g', icon: 'salt' }
+    ],
+    method: [
+      'Ensure your starter is active and bubbly — fed 4–8 hours before.',
+      'Combine flour and water in a bowl. Mix until no dry flour remains. Rest 45 minutes (autolyse).',
+      'Add starter and salt. Pinch and fold to incorporate fully.',
+      'Bulk ferment 4–5 hours at room temperature, with 3 sets of stretch and folds in the first 1.5 hours.',
+      'Divide dough into equal balls. Shape each with tight surface tension.',
+      'Place in a sealed oiled container. Cold ferment in the fridge for 24 hours.',
+      'Remove balls 2 hours before baking to fully warm to room temperature.',
+      'Preheat oven with pizza stone or steel to maximum temperature for at least 45 minutes.',
+      'Stretch each ball by hand into a thin round. Top lightly with sauce and cheese.',
+      'Bake 5–8 minutes at max temp until crust is puffed, blistered, and golden.'
+    ],
+    steps: [
+      { name: 'Mix + autolyse',      minutes: 55,   tempSensitive: false },
+      { name: 'Add starter & salt',  minutes: 10,   tempSensitive: false },
+      { name: 'Bulk + folds',        minutes: 270,  tempSensitive: true  },
+      { name: 'Divide and ball',     minutes: 15,   tempSensitive: false },
+      { name: 'Cold ferment',        minutes: 1440, tempSensitive: false, coldFerment: true },
+      { name: 'Warm up on counter',  minutes: 120,  tempSensitive: false },
+      { name: 'Preheat oven',        minutes: 45,   tempSensitive: false, parallel: true },
+      { name: 'Stretch and bake',    minutes: 15,   tempSensitive: false }
+    ]
+  },
+  detroitpizza: {
+    title: 'Detroit Style',
+    accent: 'Pizza',
+    hero: 'photos/recipe-detroit.png',
+    category: 'pizza',
+    desc: 'Deep-dish rectangular pizza with a light airy crumb, crispy bottom, and legendary caramelized cheese frico around the edges.',
+    prep: '25m',
+    rest: '5h',
+    makes: 'Makes 1 Detroit pan pizza',
+    hasColdFerment: false,
+    ingredients: [
+      { name: 'Bread Flour',       amount: '400g', icon: 'flour' },
+      { name: 'Water (room temp)', amount: '300g', icon: 'water' },
+      { name: 'Salt',              amount: '8g',   icon: 'salt' },
+      { name: 'Instant Yeast',     amount: '3g',   icon: 'yeast' },
+      { name: 'Olive Oil (dough)', amount: '15g',  icon: 'oil' },
+      { name: 'Olive Oil (pan)',   amount: '20g',  icon: 'oil' },
+      { name: 'Brick or aged cheddar (to edge of pan)', amount: '~200g', icon: 'starter' }
+    ],
+    method: [
+      'Combine water and yeast. Let sit 5 minutes.',
+      'Add flour, salt, and 15g olive oil. Mix, then knead 5–7 minutes until smooth.',
+      'Cover and bulk ferment 2 hours at room temperature.',
+      'Coat a Detroit-style pan (or 10×14 inch rectangular pan) with 20g olive oil.',
+      'Transfer dough to the pan. Gently stretch to fill — don\'t force it. If it resists, rest 15 minutes then finish stretching.',
+      'Cover and proof 60–90 minutes until pillowy and filling the pan.',
+      'Preheat oven to 260°C (500°F) with a rack in the lower third.',
+      'Cover the dough with cheese all the way to the edges of the pan — this creates the frico crust.',
+      'Add sauce in racing stripes (typically 3 lines) on top. This is the Detroit way.',
+      'Bake 15 minutes. Then move to top rack for 2–3 minutes to finish the top.',
+      'Let rest 5 minutes in the pan. Slide a knife around the edge to release the frico crust.'
+    ],
+    steps: [
+      { name: 'Mix and knead',      minutes: 20,   tempSensitive: false },
+      { name: 'Bulk fermentation',  minutes: 120,  tempSensitive: true  },
+      { name: 'Shape in pan',       minutes: 15,   tempSensitive: false },
+      { name: 'Final proof',        minutes: 75,   tempSensitive: true  },
+      { name: 'Preheat oven',       minutes: 30,   tempSensitive: false, parallel: true },
+      { name: 'Top and bake',       minutes: 18,   tempSensitive: false }
     ]
   }
 };
