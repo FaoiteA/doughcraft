@@ -1,0 +1,2991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#F5F1EA" />
+<title>DoughCraft — Bread & Pizza Made Simple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   1. DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg:            #F5F1EA;
+  --surface:       #FFFFFF;
+  --surface-alt:   #FBF8F2;
+  --sage:          #8A9A7B;
+  --sage-dark:     #5C6B4F;
+  --sage-soft:     #D6DDCB;
+  --text:          #2E2A26;
+  --text-muted:    #7A736C;
+  --divider:       #E8E2D6;
+  --shadow-sm:     0 1px 2px rgba(46, 42, 38, 0.04);
+  --shadow-md:     0 4px 16px rgba(46, 42, 38, 0.06);
+  --radius-sm:     8px;
+  --radius-md:     16px;
+  --radius-lg:     24px;
+  --radius-pill:   999px;
+  --serif:         'Cormorant Garamond', Georgia, serif;
+  --sans:          'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* ============================================================
+   2. RESET + BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--text); }
+
+/* ============================================================
+   3. LAYOUT
+   ============================================================ */
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-image: url('photos/app-bg.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+}
+
+.screen { padding: 24px 20px 24px; animation: fadeIn 0.25s ease-out; }
+.screen.hidden { display: none; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 4px 20px;
+}
+.top-bar h1 { font-family: var(--sans); font-size: 17px; font-weight: 600; }
+.icon-btn {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: var(--radius-pill);
+  color: var(--text);
+}
+.icon-btn:hover { background: rgba(255,255,255,0.6); }
+
+/* ============================================================
+   4. COMPONENTS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: 15px;
+  transition: transform 0.1s ease, background 0.2s ease;
+  width: 100%;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--sage); color: white; }
+.btn-primary:hover { background: var(--sage-dark); }
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--divider);
+}
+.btn-secondary:hover { background: var(--surface-alt); }
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--sage-soft);
+  color: var(--sage-dark);
+}
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--divider);
+  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  z-index: 10;
+}
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+}
+.nav-btn.active { color: var(--sage-dark); }
+.nav-btn svg { width: 22px; height: 22px; }
+
+/* ============================================================
+   5. SCREENS
+   ============================================================ */
+
+/* -- Splash -- */
+#screen-splash {
+  padding: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.splash {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-image: url('photos/splash-hero.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 32px calc(32px + env(safe-area-inset-bottom));
+  padding-top: calc(60px + env(safe-area-inset-top));
+}
+.splash-top {
+  text-align: center;
+  width: 100%;
+}
+.splash-logo {
+  width: 56px; height: 56px;
+  color: var(--sage-dark);
+  margin: 0 auto 8px;
+}
+.splash h1 {
+  font-size: 44px;
+  font-family: var(--serif);
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+  color: var(--sage-dark);
+}
+.splash .tagline {
+  color: var(--text-muted);
+  font-size: 15px;
+  text-align: center;
+}
+.splash-spacer { flex: 1; }
+.splash-buttons {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.splash-buttons .btn-primary {
+  box-shadow: 0 8px 24px rgba(92, 107, 79, 0.25);
+}
+.splash-buttons .btn-secondary {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* -- Home -- */
+.home-greeting { margin-bottom: 24px; }
+.home-greeting h1 {
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 4px;
+}
+.home-greeting p { color: var(--text-muted); font-size: 14px; }
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.category-card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  aspect-ratio: 3/4;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease;
+}
+.category-card:active { transform: scale(0.98); }
+.category-card .thumb {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 65%;
+  background-size: cover;
+  background-position: center;
+}
+.category-card .body { position: relative; z-index: 1; }
+.category-card h3 { font-family: var(--sans); font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.category-card p { font-size: 12px; color: var(--text-muted); }
+.category-card .badge {
+  position: absolute;
+  top: calc(65% - 20px);
+  left: 12px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: white;
+  display: grid; place-items: center;
+  color: var(--sage-dark);
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+.category-card .badge svg { width: 20px; height: 20px; }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+.section-header h2 { font-family: var(--sans); font-size: 15px; font-weight: 600; }
+.section-header a { font-size: 13px; color: var(--sage-dark); font-weight: 500; text-decoration: none; cursor: pointer; }
+
+.empty-state {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--divider);
+}
+
+/* -- Recipes -- */
+.tab-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+.tab-row::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--surface);
+  color: var(--text-muted);
+  white-space: nowrap;
+  border: 1px solid var(--divider);
+}
+.tab.active { background: var(--sage); color: white; border-color: var(--sage); }
+
+.recipe-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease;
+  cursor: pointer;
+}
+.recipe-card:active { transform: scale(0.98); }
+.recipe-card .thumb {
+  width: 72px; height: 72px;
+  border-radius: var(--radius-sm);
+  background-color: var(--sage-soft);
+  background-image: linear-gradient(135deg, var(--sage-soft), #E9E1CE);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.recipe-card .info { flex: 1; min-width: 0; }
+.recipe-card h4 { font-family: var(--sans); font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+.recipe-card .type { font-size: 12px; color: var(--sage-dark); font-weight: 500; margin-bottom: 4px; }
+.recipe-card .desc { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* -- Recipe Detail -- */
+#screen-recipe-detail { padding: 0; }
+.rd-hero {
+  position: relative;
+  width: 100%;
+  height: 44vh;
+  background-color: var(--sage-soft);
+  background-image: linear-gradient(135deg, var(--sage-soft), #E9E1CE);
+  background-size: cover;
+  background-position: center;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: hidden;
+}
+.rd-back {
+  position: absolute;
+  top: calc(16px + env(safe-area-inset-top));
+  left: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: grid; place-items: center;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+.rd-fave {
+  position: absolute;
+  top: calc(16px + env(safe-area-inset-top));
+  right: 16px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: grid; place-items: center;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+.rd-body {
+  padding: 24px 20px 20px;
+  margin-top: -20px;
+  background: var(--bg);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  position: relative;
+}
+.rd-body h1 {
+  font-family: var(--serif);
+  font-size: 28px;
+  margin-bottom: 6px;
+  line-height: 1.15;
+}
+.rd-body h1 .accent { color: var(--sage-dark); }
+.rd-body .desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  line-height: 1.55;
+}
+.rd-times {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.rd-time-card {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+.rd-time-card .label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.rd-time-card .value {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+}
+.rd-start {
+  margin-bottom: 28px;
+}
+.rd-ingredients h2 {
+  font-family: var(--serif);
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.rd-ingredients .makes {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.ingredient-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+}
+.ingredient-row .ing-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--sage-soft);
+  display: grid; place-items: center;
+  color: var(--sage-dark);
+  flex-shrink: 0;
+}
+.ingredient-row .ing-icon svg { width: 18px; height: 18px; }
+.ingredient-row .ing-name { flex: 1; font-size: 14px; font-weight: 500; }
+.ingredient-row .ing-amount { font-size: 14px; color: var(--text-muted); font-weight: 500; }
+
+/* -- Dough Calculator -- */
+.calculator {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.calculator h3 {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.calc-row {
+  margin-bottom: 12px;
+}
+.calc-row:last-child { margin-bottom: 0; }
+.calc-row .label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.calc-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.calc-pill {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--divider);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.calc-pill:active { transform: scale(0.96); }
+.calc-pill.active {
+  background: var(--sage);
+  color: white;
+  border-color: var(--sage);
+}
+
+/* -- Method -- */
+.rd-method { margin-top: 28px; margin-bottom: 12px; }
+.rd-method h2 {
+  font-family: var(--serif);
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+.rd-method ol {
+  list-style: none;
+  counter-reset: method;
+  padding: 0;
+  margin: 0;
+}
+.rd-method li {
+  counter-increment: method;
+  display: flex;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+  align-items: flex-start;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.rd-method li::before {
+  content: counter(method);
+  min-width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--sage-soft);
+  color: var(--sage-dark);
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* -- Bake Log -- */
+#screen-bake-log { padding: 0; }
+.bl-hero {
+  width: 100%;
+  height: 32vh;
+  background-size: cover;
+  background-position: center;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  background-color: var(--sage-soft);
+}
+.bl-body {
+  padding: 24px 20px 20px;
+  margin-top: -20px;
+  background: var(--bg);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  position: relative;
+}
+.bl-body h1 {
+  font-family: var(--serif);
+  font-size: 26px;
+  margin-bottom: 6px;
+  line-height: 1.15;
+}
+.bl-body .celebrate {
+  font-size: 14px;
+  color: var(--sage-dark);
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+.bl-body h2 {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+.star-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+.star {
+  width: 40px; height: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--divider);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.star:active { transform: scale(0.9); }
+.star.filled { color: #E6B347; }
+.star svg { width: 32px; height: 32px; }
+.notes-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.55;
+  resize: vertical;
+  outline: none;
+}
+.notes-input::placeholder { color: var(--text-muted); }
+.bl-actions {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+  margin-top: 24px;
+  margin-bottom: 20px;
+}
+
+/* -- History card: rating stars -- */
+.history-stars {
+  display: inline-flex;
+  gap: 2px;
+  align-items: center;
+  margin-top: 2px;
+}
+.history-stars svg { width: 12px; height: 12px; color: #E6B347; }
+.history-notes-preview {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* -- Wizard -- */
+.wizard-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 4px 16px;
+}
+.wizard-topbar .back-btn {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  color: var(--text);
+}
+.wizard-topbar .back-btn:hover { background: rgba(255,255,255,0.6); }
+.wizard-topbar h2 {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.wizard-progress {
+  display: flex;
+  gap: 6px;
+  padding: 0 4px 20px;
+}
+.wizard-progress .dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--divider);
+}
+.wizard-progress .dot.active { background: var(--sage); }
+.wizard-heading {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding: 0 4px;
+  line-height: 1.15;
+}
+.wizard-sub {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
+.quick-picks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.quick-pick {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+  text-align: center;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, border 0.15s ease;
+  cursor: pointer;
+}
+.quick-pick:active { transform: scale(0.98); }
+.quick-pick.selected { border-color: var(--sage); background: var(--sage-soft); }
+.quick-pick .label {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.quick-pick .time {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.custom-time {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+}
+.custom-time label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.custom-time input {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 15px;
+  color: var(--text);
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+.cond-group { margin-bottom: 24px; }
+.cond-group .cond-label {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+  padding: 0 4px;
+}
+.cond-group .cond-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+.cond-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.cond-pill {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 14px 8px;
+  text-align: center;
+  border: 2px solid transparent;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, border 0.15s ease, background 0.15s ease;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.cond-pill:active { transform: scale(0.97); }
+.cond-pill.selected { border-color: var(--sage); background: var(--sage-soft); color: var(--sage-dark); }
+.cond-pill .cond-title { display: block; font-weight: 600; margin-bottom: 2px; }
+.cond-pill .cond-sub { font-size: 11px; color: var(--text-muted); }
+.cond-pill.selected .cond-sub { color: var(--sage-dark); }
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+.toggle-row .info { flex: 1; }
+.toggle-row h4 { font-family: var(--sans); font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.toggle-row p { font-size: 12px; color: var(--text-muted); }
+.toggle {
+  width: 44px; height: 26px;
+  background: var(--divider);
+  border-radius: 999px;
+  position: relative;
+  transition: background 0.2s ease;
+  flex-shrink: 0;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 20px; height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+.toggle.on { background: var(--sage); }
+.toggle.on::after { transform: translateX(18px); }
+.wizard-actions {
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+/* -- Timeline preview -- */
+.timeline-summary {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.timeline-summary .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.timeline-summary .row:last-child { margin-bottom: 0; }
+.timeline-summary .k { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+.timeline-summary .v { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--text); }
+.timeline-list { margin-bottom: 20px; }
+.tl-step {
+  display: flex;
+  gap: 14px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+  align-items: center;
+}
+.tl-step .time {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--sage-dark);
+  width: 90px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.tl-step .time small { display: block; font-size: 10px; color: var(--text-muted); font-family: var(--sans); font-weight: 500; margin-top: 2px; }
+.tl-step .info { flex: 1; }
+.tl-step .name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.tl-step .dur { font-size: 12px; color: var(--text-muted); }
+
+/* -- Active Timer -- */
+#screen-timer { padding: 0; }
+.timer-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 4px;
+}
+.timer-topbar .recipe-name {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-align: center;
+  flex: 1;
+}
+.timer-topbar .close-btn {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  color: var(--text);
+}
+.timer-body {
+  padding: 12px 24px 4px;
+  text-align: center;
+}
+.timer-step-num {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.timer-step-name {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+.timer-instruction {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.55;
+  padding: 0 8px;
+}
+.ring-wrap {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  margin: 0 auto 12px;
+}
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.ring-track {
+  fill: none;
+  stroke: var(--sage-soft);
+  stroke-width: 8;
+  opacity: 0.5;
+}
+.ring-progress {
+  fill: none;
+  stroke: var(--sage);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s linear;
+}
+.ring-progress.done { stroke: var(--sage-dark); }
+.ring-progress.paused { stroke: var(--text-muted); opacity: 0.6; }
+.ring-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+}
+.ring-time {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+.ring-time-unit {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 6px;
+}
+.ring-target {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.nudge-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.nudge-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid var(--divider);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s ease;
+}
+.nudge-btn:active { transform: scale(0.96); }
+.tip-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--sage-soft);
+  border-radius: var(--radius-md);
+  margin: 0 24px 16px;
+  text-align: left;
+}
+.tip-card .tip-icon {
+  width: 18px; height: 18px;
+  color: var(--sage-dark);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.tip-card .tip-text {
+  font-size: 13px;
+  color: var(--sage-dark);
+  line-height: 1.5;
+}
+.tip-card .tip-text strong { font-weight: 700; }
+
+/* -- Backup alarm card (long steps) -- */
+.alarm-card {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #FDF6E3;
+  border: 1px solid #F0E4C3;
+  border-radius: var(--radius-md);
+  margin: 0 24px 16px;
+  text-align: left;
+  align-items: flex-start;
+}
+.alarm-card .alarm-icon {
+  width: 22px; height: 22px;
+  color: #B78A2A;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.alarm-card .alarm-body { flex: 1; }
+.alarm-card .alarm-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #6E5416;
+  margin-bottom: 2px;
+}
+.alarm-card .alarm-text {
+  font-size: 12px;
+  color: #6E5416;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+.alarm-card .alarm-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #B78A2A;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+}
+.alarm-card .alarm-btn:active { transform: scale(0.97); }
+.timer-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 24px 12px;
+}
+.timer-progress-track {
+  height: 3px;
+  background: var(--divider);
+  margin: 0 24px;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.timer-progress-fill {
+  height: 100%;
+  background: var(--sage);
+  transition: width 0.3s ease;
+}
+.timer-progress-label {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  padding-bottom: 20px;
+  font-weight: 500;
+}
+
+/* -- Continue bake card on home -- */
+.continue-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.continue-card:active { transform: scale(0.98); }
+.continue-card .thumb {
+  width: 56px; height: 56px;
+  border-radius: var(--radius-sm);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.continue-card .info { flex: 1; min-width: 0; }
+.continue-card h4 { font-family: var(--sans); font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.continue-card p { font-size: 12px; color: var(--text-muted); }
+.ring-mini {
+  width: 44px; height: 44px;
+  flex-shrink: 0;
+  position: relative;
+}
+.ring-mini svg { transform: rotate(-90deg); }
+.ring-mini .pct {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--sage-dark);
+}
+
+/* -- Timers -- */
+.timers-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+.timers-empty svg { width: 64px; height: 64px; color: var(--sage); opacity: 0.4; margin-bottom: 16px; }
+.timers-empty h3 { font-family: var(--serif); font-size: 24px; margin-bottom: 8px; }
+.timers-empty p { color: var(--text-muted); font-size: 14px; }
+
+/* -- Learn -- */
+.learn-header { margin-bottom: 20px; }
+.learn-header h1 { font-family: var(--serif); font-size: 28px; margin-bottom: 8px; }
+.learn-header p { color: var(--text-muted); font-size: 14px; }
+
+.learn-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  margin-bottom: 10px;
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.learn-item:active { transform: scale(0.98); }
+.learn-item .chevron-icon {
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.learn-item.open .chevron-icon { transform: rotate(90deg); }
+.learn-item .thumb {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--sage-soft);
+  display: grid; place-items: center;
+  color: var(--sage-dark);
+  flex-shrink: 0;
+}
+.learn-item .thumb svg { width: 22px; height: 22px; }
+.learn-item .info { flex: 1; }
+.learn-item h4 { font-family: var(--sans); font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.learn-item p { font-size: 12px; color: var(--text-muted); }
+.learn-body {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 0 16px;
+  margin: -12px 0 12px;
+  box-shadow: var(--shadow-sm);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+}
+.learn-body.open {
+  max-height: 1200px;
+  padding: 4px 16px 18px;
+}
+.learn-body h5 {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  margin: 12px 0 4px;
+  color: var(--text);
+}
+.learn-body p {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.learn-body ul {
+  margin: 0 0 10px 18px;
+  padding: 0;
+}
+.learn-body li {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 4px;
+}
+
+/* -- Profile -- */
+.profile-header {
+  text-align: center;
+  padding: 20px 0 32px;
+}
+.profile-avatar {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: var(--sage-soft);
+  display: grid; place-items: center;
+  color: var(--sage-dark);
+  margin: 0 auto 12px;
+}
+.profile-avatar svg { width: 44px; height: 44px; }
+.profile-header h2 { font-family: var(--serif); font-size: 24px; margin-bottom: 4px; }
+.profile-header p { color: var(--text-muted); font-size: 13px; }
+
+.settings-group {
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+.settings-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-bottom: 1px solid var(--divider);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.settings-item:last-child { border-bottom: none; }
+.settings-item:hover { background: var(--surface-alt); }
+.settings-item .icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--sage-soft);
+  display: grid; place-items: center;
+  color: var(--sage-dark);
+  flex-shrink: 0;
+}
+.settings-item .icon svg { width: 18px; height: 18px; }
+.settings-item .info { flex: 1; }
+.settings-item h4 { font-family: var(--sans); font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.settings-item p { font-size: 12px; color: var(--text-muted); }
+.settings-item .chevron { color: var(--text-muted); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ================= SPLASH ================= -->
+  <div class="screen" id="screen-splash">
+    <div class="splash">
+      <div class="splash-top">
+        <div class="splash-logo">
+          <svg viewBox="0 0 72 72" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M36 14 C36 10 33 6 30 8 M36 14 C36 10 39 6 42 8 M36 14 L36 22"/>
+            <path d="M20 34 C20 26 27 22 36 22 C45 22 52 26 52 34 C52 44 46 50 36 50 C26 50 20 44 20 34 Z" fill="var(--sage-soft)" fill-opacity="0.4"/>
+            <path d="M28 30 Q30 34 28 38 M36 30 Q38 34 36 38 M44 30 Q46 34 44 38"/>
+          </svg>
+        </div>
+        <h1>DoughCraft</h1>
+        <p class="tagline">Bread &amp; Pizza. Made Simple.</p>
+      </div>
+      <div class="splash-spacer"></div>
+      <div class="splash-buttons">
+        <button class="btn btn-primary" onclick="completeOnboarding()">Get Started</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= HOME ================= -->
+  <div class="screen hidden" id="screen-home">
+    <div class="top-bar">
+      <button class="icon-btn" onclick="go('splash')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h1>Home</h1>
+      <button class="icon-btn" aria-label="Notifications">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+    </div>
+
+    <div class="home-greeting">
+      <h1>Good morning, Baker! 👋</h1>
+      <p>What will we bake today?</p>
+    </div>
+
+    <div class="category-grid">
+      <div class="category-card" onclick="openRecipesFiltered('bread')">
+        <div class="thumb" style="background-image: url('photos/cat-bread.png')"></div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12 L18 12 M12 6 L12 18"/></svg>
+        </div>
+        <div class="body">
+          <h3>Bread</h3>
+          <p>Classic loaves &amp; more</p>
+        </div>
+      </div>
+
+      <div class="category-card" onclick="openRecipesFiltered('pizza')">
+        <div class="thumb" style="background-image: url('photos/cat-pizza.png')"></div>
+        <div class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 L20 4 M4 20 L12 20 L12 12"/></svg>
+        </div>
+        <div class="body">
+          <h3>Pizza Dough</h3>
+          <p>Perfect pizza every time</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <h2>Continue Your Journey</h2>
+      <a onclick="alert('View all — coming soon')">View all</a>
+    </div>
+    <div class="empty-state">
+      No active bakes. Pick a recipe to start.
+    </div>
+  </div>
+
+  <!-- ================= RECIPES ================= -->
+  <div class="screen hidden" id="screen-recipes">
+    <div class="top-bar">
+      <button class="icon-btn" onclick="go('home')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h1>Recipes</h1>
+      <button class="icon-btn" aria-label="Search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab active" data-filter="all" onclick="filterRecipes('all')">All</button>
+      <button class="tab" data-filter="bread" onclick="filterRecipes('bread')">Bread</button>
+      <button class="tab" data-filter="pizza" onclick="filterRecipes('pizza')">Pizza</button>
+      <button class="tab" data-filter="sourdough" onclick="filterRecipes('sourdough')">Sourdough</button>
+    </div>
+
+    <div class="section-header"><h2>Popular Recipes</h2></div>
+
+    <div class="recipe-card" data-category="bread" data-tags="sourdough" onclick="openRecipe('sourdough')">
+      <div class="thumb" style="background-image: url('photos/recipe-sourdough.png')"></div>
+      <div class="info">
+        <h4>Sourdough Country Loaf</h4>
+        <div class="type">Bread · Sourdough · Advanced</div>
+        <div class="desc">Open crumb, tangy flavour, no yeast.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="bread" onclick="openRecipe('noknead')">
+      <div class="thumb" style="background-image: url('photos/recipe-noknead.png')"></div>
+      <div class="info">
+        <h4>No-Knead Artisan Bread</h4>
+        <div class="type">Bread · Beginner</div>
+        <div class="desc">Overnight, easy &amp; delicious.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="pizza" onclick="openRecipe('neapolitan')">
+      <div class="thumb" style="background-image: url('photos/recipe-neapolitan.png')"></div>
+      <div class="info">
+        <h4>Neapolitan Pizza Dough</h4>
+        <div class="type">Pizza · Intermediate</div>
+        <div class="desc">Authentic pizza, pizzeria style.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="pizza" onclick="openRecipe('samedaypizza')">
+      <div class="thumb" style="background-image: url('photos/recipe-samedaypizza.png')"></div>
+      <div class="info">
+        <h4>Same-Day Pan Pizza</h4>
+        <div class="type">Pizza · Easy</div>
+        <div class="desc">Mix in the morning, eat by dinner.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="pizza" onclick="openRecipe('nypizza')">
+      <div class="thumb" style="background-image: url('photos/recipe-nypizza.png')"></div>
+      <div class="info">
+        <h4>New York Style Pizza</h4>
+        <div class="type">Pizza · Intermediate</div>
+        <div class="desc">Chewy, foldable slices with 48h flavour.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card" data-category="bread" onclick="openRecipe('wholewheat')">
+      <div class="thumb" style="background-image: url('photos/recipe-wholewheat.png')"></div>
+      <div class="info">
+        <h4>Whole Wheat Sandwich Bread</h4>
+        <div class="type">Bread · Easy</div>
+        <div class="desc">Soft, healthy &amp; wholesome.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RECIPE DETAIL ================= -->
+  <div class="screen hidden" id="screen-recipe-detail">
+    <div class="rd-hero" id="rd-hero">
+      <button class="rd-back" onclick="go('recipes')" aria-label="Back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <button class="rd-fave" aria-label="Favorite">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+    </div>
+    <div class="rd-body">
+      <h1 id="rd-title"><span class="accent"></span></h1>
+      <p class="desc" id="rd-desc"></p>
+      <div class="rd-times">
+        <div class="rd-time-card">
+          <div class="label">Prep Time</div>
+          <div class="value" id="rd-prep"></div>
+        </div>
+        <div class="rd-time-card">
+          <div class="label">Rest Time</div>
+          <div class="value" id="rd-rest"></div>
+        </div>
+      </div>
+      <button class="btn btn-primary rd-start" onclick="startWizard()">Start Recipe</button>
+
+      <div class="calculator" id="rd-calculator" style="display:none">
+        <h3>Adjust to your batch</h3>
+        <div class="calc-row">
+          <div class="label">Number of balls</div>
+          <div class="calc-pills" id="calc-balls-row"></div>
+        </div>
+        <div class="calc-row">
+          <div class="label">Pizza size</div>
+          <div class="calc-pills" id="calc-size-row"></div>
+        </div>
+      </div>
+
+      <div class="rd-ingredients">
+        <h2>Ingredients</h2>
+        <div class="makes" id="rd-makes"></div>
+        <div id="rd-ingredients-list"></div>
+      </div>
+
+      <div class="rd-method">
+        <h2>Method</h2>
+        <ol id="rd-method-list"></ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TIMERS ================= -->
+  <div class="screen hidden" id="screen-timers">
+    <div class="top-bar">
+      <button class="icon-btn" onclick="go('home')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h1>Your Bakes</h1>
+      <div style="width:40px"></div>
+    </div>
+
+    <div id="bakes-active-section" style="display:none">
+      <div class="section-header"><h2>In progress</h2></div>
+      <div id="bakes-active"></div>
+    </div>
+
+    <div class="section-header"><h2>Bake History</h2></div>
+    <div id="bakes-history"></div>
+    <div id="bakes-empty" class="empty-state">
+      Your completed bakes will appear here.
+    </div>
+  </div>
+
+  <!-- ================= LEARN ================= -->
+  <div class="screen hidden" id="screen-learn">
+    <div class="top-bar">
+      <button class="icon-btn" onclick="go('home')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h1>Learn</h1>
+      <div style="width:40px"></div>
+    </div>
+
+    <div class="learn-header">
+      <h1>Baking Basics</h1>
+      <p>Tips, guides and techniques to help you bake with confidence.</p>
+    </div>
+
+    <div class="learn-item" onclick="toggleLearn(this)">
+      <div class="thumb"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4 L18 4 L18 18 L4 18 Z"/><path d="M4 8 L18 8"/></svg></div>
+      <div class="info">
+        <h4>Understanding Dough</h4>
+        <p>The science behind great bread.</p>
+      </div>
+      <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>
+    <div class="learn-body">
+      <h5>What is dough, really?</h5>
+      <p>Dough is a network of gluten strands trapping gas from fermentation. Get those two things right — gluten and gas — and everything else falls into place.</p>
+      <h5>The four stages</h5>
+      <ul>
+        <li><strong>Mix</strong> — hydrate the flour, activate the yeast.</li>
+        <li><strong>Ferment</strong> — yeast eats sugars, produces CO₂ and flavour compounds.</li>
+        <li><strong>Shape</strong> — build surface tension so the dough holds structure.</li>
+        <li><strong>Bake</strong> — set the structure and develop crust colour.</li>
+      </ul>
+      <h5>Why temperature matters</h5>
+      <p>Yeast is a living thing. At 26°C fermentation runs fast; at 18°C it slows to a crawl. A warm kitchen means less waiting; a cool one means more flavour development.</p>
+    </div>
+
+    <div class="learn-item" onclick="toggleLearn(this)">
+      <div class="thumb"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3 L11 19"/><path d="M6 6 L16 6"/><path d="M5 19 L17 19"/></svg></div>
+      <div class="info">
+        <h4>Flour Guide</h4>
+        <p>Find the right flour for your bake.</p>
+      </div>
+      <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>
+    <div class="learn-body">
+      <h5>Protein is everything</h5>
+      <p>Protein content in flour determines gluten strength. More protein means chewier, structured breads. Less means tender, cake-like results.</p>
+      <ul>
+        <li><strong>"00" flour</strong> (11–12%) — silky, elastic. The Neapolitan pizza standard.</li>
+        <li><strong>Bread flour</strong> (12–14%) — strong gluten, great oven spring. Ideal for artisan loaves.</li>
+        <li><strong>All-purpose</strong> (10–11%) — versatile middle-ground. Works for most home baking.</li>
+        <li><strong>Whole wheat</strong> (13–14%) — nutty, denser. Absorbs more water.</li>
+      </ul>
+      <h5>A rule of thumb</h5>
+      <p>Swapping flours changes hydration needs. Whole wheat drinks more water than white. Start 5% higher on hydration when using it.</p>
+    </div>
+
+    <div class="learn-item" onclick="toggleLearn(this)">
+      <div class="thumb"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M8 11 Q11 8 14 11 T14 14"/></svg></div>
+      <div class="info">
+        <h4>Shaping Techniques</h4>
+        <p>Learn how to shape like a pro.</p>
+      </div>
+      <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>
+    <div class="learn-body">
+      <h5>Why shape matters</h5>
+      <p>Shaping builds surface tension. That tension is what holds the dough's structure during proof and gives you a tall, open crumb instead of a flat pancake.</p>
+      <h5>Three core shapes</h5>
+      <ul>
+        <li><strong>Boule</strong> — round loaf. Gently pull the dough toward you in a circle, rotating as you go. Aim for a taut, smooth top.</li>
+        <li><strong>Batard</strong> — oval loaf. Fold like an envelope, then roll gently into a log.</li>
+        <li><strong>Pizza ball</strong> — smooth top, pinched bottom. Cup the dough in your palm and drag on the counter to tighten.</li>
+      </ul>
+      <h5>Handle gently</h5>
+      <p>You spent hours building air into the dough during bulk. Don't punch it out. Shape with a light hand.</p>
+    </div>
+
+    <div class="learn-item" onclick="toggleLearn(this)">
+      <div class="thumb"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3 L3 19 L19 19 Z"/><path d="M11 10 L11 14"/><circle cx="11" cy="16" r="0.5" fill="currentColor"/></svg></div>
+      <div class="info">
+        <h4>Troubleshooting</h4>
+        <p>Fix common dough problems.</p>
+      </div>
+      <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>
+    <div class="learn-body">
+      <h5>Dense, gummy crumb</h5>
+      <p>Under-fermented or under-baked. Give bulk more time, or bake 5–10 minutes longer. Check internal temperature reaches 96°C.</p>
+      <h5>Flat, no oven spring</h5>
+      <p>Over-proofed. Dough was pushed too far during final proof. Shorten proof next time; poke test — dough should spring back slowly, not stay dented.</p>
+      <h5>Pale crust</h5>
+      <p>Oven wasn't hot enough or humidity was too high. Preheat longer and remove any Dutch oven lid earlier.</p>
+      <h5>Dough won't rise</h5>
+      <p>Dead yeast, or the water was too hot and killed it. Water should feel just warm — never hot. Test yeast in warm water with a pinch of sugar; if it doesn't foam in 10 minutes, buy fresh yeast.</p>
+      <h5>Sticky, unworkable dough</h5>
+      <p>Too much water for the flour. Add a small amount of flour and knead in. Or embrace it — high-hydration doughs give great open crumb.</p>
+    </div>
+  </div>
+
+  <!-- ================= PROFILE ================= -->
+  <div class="screen hidden" id="screen-profile">
+    <div class="top-bar">
+      <button class="icon-btn" onclick="go('home')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h1>Profile</h1>
+      <div style="width:40px"></div>
+    </div>
+
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="22" cy="16" r="7"/><path d="M8 36 Q22 26 36 36"/></svg>
+      </div>
+      <h2>Baker</h2>
+      <p>0 bakes logged</p>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-item" onclick="exportJournal()">
+        <div class="icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 L9 3 L15 9 M6 8 L6 15 L12 15 L12 8"/></svg></div>
+        <div class="info"><h4>Export journal</h4><p>Save all bakes as a JSON file</p></div>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </div>
+      <div class="settings-item" onclick="document.getElementById('import-file').click()">
+        <div class="icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9 L9 15 L3 9 M6 10 L6 3 L12 3 L12 10"/></svg></div>
+        <div class="info"><h4>Import journal</h4><p>Restore from a JSON file</p></div>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </div>
+      <input type="file" id="import-file" accept="application/json" style="display:none" onchange="handleImportFile(this)" />
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-item" onclick="toggleTempUnit()">
+        <div class="icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="7"/><path d="M9 5 L9 9 L12 11"/></svg></div>
+        <div class="info"><h4>Temperature units</h4><p id="settings-temp-value">Celsius</p></div>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </div>
+      <div class="settings-item" onclick="showAbout()">
+        <div class="icon"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="7"/><path d="M9 6 L9 10 M9 12.5 L9 13"/></svg></div>
+        <div class="info"><h4>About DoughCraft</h4><p>Version 1.0.0</p></div>
+        <svg class="chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= WIZARD: TARGET TIME ================= -->
+  <div class="screen hidden" id="screen-wizard-target">
+    <div class="wizard-topbar">
+      <button class="back-btn" onclick="go('recipe-detail')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h2 id="wt-recipe-name"></h2>
+    </div>
+    <div class="wizard-progress">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <h1 class="wizard-heading">When do you want to eat?</h1>
+    <p class="wizard-sub">Pick a quick option or set a custom time.</p>
+    <div class="quick-picks">
+      <div class="quick-pick" data-target="tonight" onclick="pickTarget('tonight')">
+        <div class="label">Tonight</div>
+        <div class="time" id="qp-tonight-time">7:00 PM</div>
+      </div>
+      <div class="quick-pick" data-target="tomorrow" onclick="pickTarget('tomorrow')">
+        <div class="label">Tomorrow</div>
+        <div class="time" id="qp-tomorrow-time">7:00 PM</div>
+      </div>
+    </div>
+    <div class="custom-time">
+      <label>Or set a custom time</label>
+      <input type="datetime-local" id="target-datetime" onchange="pickTargetCustom(this.value)" />
+    </div>
+    <div class="wizard-actions">
+      <button class="btn btn-primary" onclick="wizardStep2()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ================= WIZARD: CONDITIONS ================= -->
+  <div class="screen hidden" id="screen-wizard-conditions">
+    <div class="wizard-topbar">
+      <button class="back-btn" onclick="go('wizard-target')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h2 id="wc-recipe-name"></h2>
+    </div>
+    <div class="wizard-progress">
+      <div class="dot"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+    <h1 class="wizard-heading">Tell us your setup</h1>
+    <p class="wizard-sub">This helps us calculate accurate timings.</p>
+
+    <div class="cond-group">
+      <div class="cond-label">Kitchen temperature</div>
+      <div class="cond-hint">Not sure? Pick Normal.</div>
+      <div class="cond-row">
+        <div class="cond-pill" data-temp="cool" onclick="pickTemp('cool')">
+          <span class="cond-title">Cool</span>
+          <span class="cond-sub">18°C</span>
+        </div>
+        <div class="cond-pill selected" data-temp="normal" onclick="pickTemp('normal')">
+          <span class="cond-title">Normal</span>
+          <span class="cond-sub">22°C</span>
+        </div>
+        <div class="cond-pill" data-temp="warm" onclick="pickTemp('warm')">
+          <span class="cond-title">Warm</span>
+          <span class="cond-sub">26°C</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cond-group" id="cond-cold-ferment" style="display:none">
+      <div class="cond-label">Cold ferment?</div>
+      <div class="cond-hint">Deeper flavour, but takes longer.</div>
+      <div class="toggle-row" onclick="toggleCold()">
+        <div class="info">
+          <h4>Overnight in the fridge</h4>
+          <p>Cold ferment for ~22 hours</p>
+        </div>
+        <div class="toggle on" id="toggle-cold"></div>
+      </div>
+    </div>
+
+    <div class="wizard-actions">
+      <button class="btn btn-primary" onclick="wizardStep3()">Build my timeline</button>
+    </div>
+  </div>
+
+  <!-- ================= WIZARD: TIMELINE PREVIEW ================= -->
+  <div class="screen hidden" id="screen-wizard-preview">
+    <div class="wizard-topbar">
+      <button class="back-btn" onclick="go('wizard-conditions')" aria-label="Back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <h2 id="wp-recipe-name"></h2>
+    </div>
+    <div class="wizard-progress">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot active"></div>
+    </div>
+    <h1 class="wizard-heading">Your plan</h1>
+    <p class="wizard-sub" id="wp-sub"></p>
+    <div class="timeline-summary">
+      <div class="row"><span class="k">Start</span><span class="v" id="tl-start"></span></div>
+      <div class="row"><span class="k">Total time</span><span class="v" id="tl-total"></span></div>
+      <div class="row"><span class="k">Ready to eat</span><span class="v" id="tl-end"></span></div>
+    </div>
+    <div class="timeline-list" id="tl-steps"></div>
+    <div class="wizard-actions">
+      <button class="btn btn-primary" onclick="startBaking()">Start baking</button>
+    </div>
+  </div>
+
+  <!-- ================= ACTIVE TIMER ================= -->
+  <div class="screen hidden" id="screen-timer">
+    <div class="timer-topbar">
+      <button class="close-btn" onclick="closeTimer()" aria-label="Close">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+      </button>
+      <div class="recipe-name" id="timer-recipe-name"></div>
+      <div style="width:40px"></div>
+    </div>
+    <div class="timer-body">
+      <div class="timer-step-num" id="timer-step-num">Step 1 of 6</div>
+      <div class="timer-step-name" id="timer-step-name">Let it rise</div>
+      <div class="timer-instruction" id="timer-instruction">Keep the dough in a warm place until it has doubled in size.</div>
+      <div class="ring-wrap">
+        <svg class="ring-svg" viewBox="0 0 240 240">
+          <circle class="ring-track" cx="120" cy="120" r="110"/>
+          <circle class="ring-progress" id="ring-progress" cx="120" cy="120" r="110"
+                  stroke-dasharray="691.15" stroke-dashoffset="0"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-time" id="ring-time">0h 00m</div>
+          <div class="ring-time-unit">remaining</div>
+        </div>
+      </div>
+      <div class="ring-target" id="ring-target">Target: 0h 00m</div>
+      <div class="nudge-row">
+        <button class="nudge-btn" onclick="nudgeStep(-15)">−15m</button>
+        <button class="nudge-btn" onclick="nudgeStep(15)">+15m</button>
+      </div>
+    </div>
+    <div class="tip-card" id="tip-card">
+      <svg class="tip-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M10 6 L10 10 M10 13.5 L10 14"/></svg>
+      <div class="tip-text" id="tip-text"><strong>Tip:</strong> Trust the dough — go by look and feel, not just the clock.</div>
+    </div>
+    <div class="alarm-card" id="alarm-card" style="display:none">
+      <svg class="alarm-icon" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="12" r="8"/><path d="M11 8 L11 12 L14 14"/><path d="M6 3 L4 5 M16 3 L18 5"/></svg>
+      <div class="alarm-body">
+        <div class="alarm-title">Set a phone alarm as backup</div>
+        <div class="alarm-text">This step ends at <strong id="alarm-time"></strong>. Your phone will sleep — set a native alarm so you don't miss it.</div>
+        <button class="alarm-btn" onclick="setBackupAlarm()">Set alarm for <span id="alarm-btn-time"></span></button>
+      </div>
+    </div>
+    <div class="timer-actions">
+      <button class="btn btn-secondary" onclick="skipStep()">Skip Step</button>
+      <button class="btn btn-primary" id="pause-btn" onclick="togglePause()">Pause Timer</button>
+    </div>
+    <div class="timer-progress-track">
+      <div class="timer-progress-fill" id="timer-progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="timer-progress-label" id="timer-progress-label">Step 1 of 6</div>
+  </div>
+
+  <!-- ================= BAKE LOG ================= -->
+  <div class="screen hidden" id="screen-bake-log">
+    <div class="bl-hero" id="bl-hero"></div>
+    <div class="bl-body">
+      <div class="celebrate">🎉 Bake complete</div>
+      <h1 id="bl-title"></h1>
+      <h2>How did it turn out?</h2>
+      <div class="star-row" id="bl-stars">
+        <div class="star" data-val="1" onclick="setStars(1)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L15 9 L22 9.5 L17 14.5 L18.5 22 L12 18 L5.5 22 L7 14.5 L2 9.5 L9 9 Z"/></svg></div>
+        <div class="star" data-val="2" onclick="setStars(2)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L15 9 L22 9.5 L17 14.5 L18.5 22 L12 18 L5.5 22 L7 14.5 L2 9.5 L9 9 Z"/></svg></div>
+        <div class="star" data-val="3" onclick="setStars(3)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L15 9 L22 9.5 L17 14.5 L18.5 22 L12 18 L5.5 22 L7 14.5 L2 9.5 L9 9 Z"/></svg></div>
+        <div class="star" data-val="4" onclick="setStars(4)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L15 9 L22 9.5 L17 14.5 L18.5 22 L12 18 L5.5 22 L7 14.5 L2 9.5 L9 9 Z"/></svg></div>
+        <div class="star" data-val="5" onclick="setStars(5)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L15 9 L22 9.5 L17 14.5 L18.5 22 L12 18 L5.5 22 L7 14.5 L2 9.5 L9 9 Z"/></svg></div>
+      </div>
+      <h2>Notes</h2>
+      <textarea class="notes-input" id="bl-notes" placeholder="How was the crumb? Crust? What would you change next time?"></textarea>
+      <div class="bl-actions">
+        <button class="btn btn-secondary" onclick="skipBakeLog()">Skip</button>
+        <button class="btn btn-primary" onclick="saveBakeLog()">Save to journal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BOTTOM NAV ================= -->
+  </div>
+
+  <nav class="bottom-nav" id="nav" style="display:none">
+    <button class="nav-btn active" data-screen="home" onclick="go('home')">
+      <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10 L11 3 L19 10 L19 18 L14 18 L14 13 L8 13 L8 18 L3 18 Z"/></svg>
+      Home
+    </button>
+    <button class="nav-btn" data-screen="recipes" onclick="go('recipes')">
+      <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3 L17 3 L17 19 L5 19 Z"/><path d="M8 7 L14 7 M8 11 L14 11 M8 15 L12 15"/></svg>
+      Recipes
+    </button>
+    <button class="nav-btn" data-screen="timers" onclick="go('timers')">
+      <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="12" r="7"/><path d="M11 8 L11 12 L14 14"/><path d="M8 3 L14 3"/></svg>
+      Timers
+    </button>
+    <button class="nav-btn" data-screen="learn" onclick="go('learn')">
+      <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5 L11 3 L18 5 L18 17 L11 15 L4 17 Z"/><path d="M11 3 L11 15"/></svg>
+      Learn
+    </button>
+    <button class="nav-btn" data-screen="profile" onclick="go('profile')">
+      <svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="8" r="4"/><path d="M4 18 Q11 12 18 18"/></svg>
+      Profile
+    </button>
+  </nav>
+
+<script>
+// ============================================================
+// Recipe data
+// ============================================================
+const RECIPES = {
+  noknead: {
+    title: 'No-Knead Artisan',
+    accent: 'Bread',
+    hero: 'photos/recipe-noknead.png',
+    category: 'bread',
+    desc: 'A rustic, hands-off loaf with an incredible crust and open crumb. Mix in the evening, bake in the morning — no kneading, no fuss.',
+    prep: '15m',
+    rest: '18h',
+    makes: 'Makes 1 loaf',
+    hasColdFerment: false,
+    ingredients: [
+      { name: 'Bread Flour', amount: '400g',   icon: 'flour' },
+      { name: 'Water (room temp)', amount: '320g',   icon: 'water' },
+      { name: 'Salt',        amount: '8g',     icon: 'salt' },
+      { name: 'Instant Yeast', amount: '1g',    icon: 'yeast' }
+    ],
+    method: [
+      'Combine flour, water, salt and yeast in a large bowl. Stir until no dry flour remains — the dough will be shaggy and sticky.',
+      'Cover the bowl with plastic wrap or a damp cloth. Rest at room temperature for 12–18 hours until the surface is bubbly and puffy.',
+      'Turn dough onto a floured surface. Fold it over itself a few times to build tension. Shape into a boule with a smooth, taut top.',
+      'Rest the shaped dough on parchment paper for 45–60 minutes.',
+      'Preheat a Dutch oven with lid at 240°C (475°F) for 45 minutes.',
+      'Score the top of the loaf with a sharp knife or lame. Carefully lower the parchment and dough into the hot Dutch oven and cover.',
+      'Bake covered for 30 minutes. Uncover and bake a further 15 minutes until deeply golden.',
+      'Cool on a wire rack for at least 1 hour before slicing — the crumb is still setting.'
+    ],
+    steps: [
+      { name: 'Mix dough',          minutes: 10,  tempSensitive: false },
+      { name: 'Bulk fermentation',  minutes: 720, tempSensitive: true  },
+      { name: 'Shape',              minutes: 15,  tempSensitive: false },
+      { name: 'Preheat oven',       minutes: 45,  tempSensitive: false, parallel: true },
+      { name: 'Final proof',        minutes: 60,  tempSensitive: true  },
+      { name: 'Bake',               minutes: 45,  tempSensitive: false }
+    ]
+  },
+  neapolitan: {
+    title: 'Neapolitan Pizza',
+    accent: 'Dough',
+    hero: 'photos/recipe-neapolitan.png',
+    category: 'pizza',
+    desc: 'A simple, authentic pizza dough for a crispy crust and soft, airy interior. Cold ferment 24 hours for deep flavour.',
+    prep: '20m',
+    rest: '24h',
+    makes: 'Makes 2 dough balls',
+    hasColdFerment: true,
+    calculator: {
+      ballWeights: { '9': 220, '12': 280, '14': 320 },
+      bakersPct: { flour: 100, water: 61, salt: 3, yeast: 0.4 },
+      defaultBalls: 2,
+      defaultSize: '12'
+    },
+    ingredients: [
+      { name: '"00" Flour',        calcKey: 'flour', unit: 'g', icon: 'flour' },
+      { name: 'Water (room temp)', calcKey: 'water', unit: 'g', icon: 'water' },
+      { name: 'Salt',              calcKey: 'salt',  unit: 'g', icon: 'salt' },
+      { name: 'Instant Yeast',     calcKey: 'yeast', unit: 'g', icon: 'yeast' }
+    ],
+    method: [
+      'Dissolve yeast in room-temperature water. Let sit 2 minutes.',
+      'Combine flour and water in a bowl. Mix until no dry flour remains. Rest 20 minutes (autolyse).',
+      'Add salt and knead for 10–15 minutes until the dough is smooth, elastic, and passes the windowpane test.',
+      'Cover and bulk ferment at room temperature for 2 hours until visibly puffy.',
+      'Divide dough into equal balls. Shape each with tight surface tension by cupping and dragging on the counter.',
+      'Place balls in a sealed oiled container. Cold ferment in the fridge for 22–24 hours.',
+      'Remove balls from fridge 2 hours before baking to fully warm to room temperature.',
+      'Preheat oven with pizza stone or steel to maximum temperature for at least 45 minutes.',
+      'Stretch each ball by hand into a thin round, leaving a puffy crust ring. Top lightly with sauce and cheese.',
+      'Bake 90 seconds in a wood-fired oven, or 5–8 minutes at max temperature in a home oven.'
+    ],
+    steps: [
+      { name: 'Mix dough',          minutes: 15,   tempSensitive: false },
+      { name: 'Bulk (room temp)',   minutes: 120,  tempSensitive: true  },
+      { name: 'Divide and ball',    minutes: 15,   tempSensitive: false },
+      { name: 'Cold ferment',       minutes: 1320, tempSensitive: false, coldFerment: true },
+      { name: 'Warm up on counter', minutes: 120,  tempSensitive: false },
+      { name: 'Preheat oven',       minutes: 45,   tempSensitive: false, parallel: true },
+      { name: 'Stretch and bake',   minutes: 15,   tempSensitive: false }
+    ]
+  },
+  samedaypizza: {
+    title: 'Same-Day Pan',
+    accent: 'Pizza',
+    hero: 'photos/recipe-samedaypizza.png',
+    category: 'pizza',
+    desc: 'Mix in the morning, eat by dinner. A weeknight-friendly dough that skips the long ferment without losing flavour.',
+    prep: '15m',
+    rest: '4h',
+    makes: 'Makes 2 dough balls',
+    hasColdFerment: false,
+    calculator: {
+      ballWeights: { '9': 230, '12': 300, '14': 340 },
+      bakersPct: { flour: 100, water: 65, salt: 2.5, yeast: 1 },
+      defaultBalls: 2,
+      defaultSize: '12'
+    },
+    ingredients: [
+      { name: 'Bread Flour',       calcKey: 'flour', unit: 'g', icon: 'flour' },
+      { name: 'Water (room temp)', calcKey: 'water', unit: 'g', icon: 'water' },
+      { name: 'Salt',              calcKey: 'salt',  unit: 'g', icon: 'salt' },
+      { name: 'Instant Yeast',     calcKey: 'yeast', unit: 'g', icon: 'yeast' }
+    ],
+    method: [
+      'Combine water and yeast in a bowl. Stir to dissolve.',
+      'Add flour and salt. Mix until shaggy, then knead 5 minutes until smooth.',
+      'Cover and bulk ferment at room temperature for 3 hours. The dough should nearly double.',
+      'Divide into equal balls and place in an oiled sealed container.',
+      'Rest at room temperature for 45 minutes.',
+      'Preheat oven with pizza stone or steel to maximum temperature for at least 45 minutes.',
+      'Stretch each ball into a round. Top with sauce and cheese.',
+      'Bake 5–8 minutes at maximum temperature until crust is golden and blistered.'
+    ],
+    steps: [
+      { name: 'Mix dough',          minutes: 10,  tempSensitive: false },
+      { name: 'Bulk fermentation',  minutes: 180, tempSensitive: true  },
+      { name: 'Divide and ball',    minutes: 10,  tempSensitive: false },
+      { name: 'Rest balls',         minutes: 45,  tempSensitive: false },
+      { name: 'Preheat oven',       minutes: 45,  tempSensitive: false, parallel: true },
+      { name: 'Stretch and bake',   minutes: 10,  tempSensitive: false }
+    ]
+  },
+  nypizza: {
+    title: 'New York Style',
+    accent: 'Pizza',
+    hero: 'photos/recipe-nypizza.png',
+    category: 'pizza',
+    desc: 'Foldable slices, chewy crust, slightly thicker than Neapolitan. A 48-hour cold ferment gives it that classic New York flavour.',
+    prep: '20m',
+    rest: '48h',
+    makes: 'Makes 2 dough balls',
+    hasColdFerment: true,
+    calculator: {
+      ballWeights: { '12': 320, '14': 380, '16': 440 },
+      bakersPct: { flour: 100, water: 63, salt: 2.5, oil: 2, yeast: 0.3 },
+      defaultBalls: 2,
+      defaultSize: '14'
+    },
+    ingredients: [
+      { name: 'Bread Flour',       calcKey: 'flour', unit: 'g', icon: 'flour' },
+      { name: 'Water (room temp)', calcKey: 'water', unit: 'g', icon: 'water' },
+      { name: 'Salt',              calcKey: 'salt',  unit: 'g', icon: 'salt' },
+      { name: 'Olive Oil',         calcKey: 'oil',   unit: 'g', icon: 'oil' },
+      { name: 'Instant Yeast',     calcKey: 'yeast', unit: 'g', icon: 'yeast' }
+    ],
+    method: [
+      'Combine yeast with water. Let sit 5 minutes until dissolved.',
+      'Add flour, salt, and olive oil. Mix to combine, then knead 8–10 minutes until smooth and elastic.',
+      'Cover and bulk ferment at room temperature for 2 hours.',
+      'Divide into equal balls. Coat lightly with oil and place in a sealed container.',
+      'Cold ferment in the fridge for 48–72 hours. Longer means more flavour.',
+      'Remove balls 3 hours before baking to fully warm to room temperature.',
+      'Preheat oven with pizza stone or steel to 275°C (525°F) for at least 45 minutes.',
+      'Stretch each ball by hand — NY style is slightly thicker than Neapolitan. Leave a modest crust ring.',
+      'Bake 8–10 minutes until crust is golden and slightly blistered. Slice into large triangles.'
+    ],
+    steps: [
+      { name: 'Mix dough',          minutes: 20,   tempSensitive: false },
+      { name: 'Bulk (room temp)',   minutes: 120,  tempSensitive: true  },
+      { name: 'Divide and ball',    minutes: 15,   tempSensitive: false },
+      { name: 'Cold ferment',       minutes: 2760, tempSensitive: false, coldFerment: true },
+      { name: 'Warm up on counter', minutes: 180,  tempSensitive: false },
+      { name: 'Preheat oven',       minutes: 45,   tempSensitive: false, parallel: true },
+      { name: 'Stretch and bake',   minutes: 15,   tempSensitive: false }
+    ]
+  },
+  sourdough: {
+    title: 'Sourdough Country',
+    accent: 'Loaf',
+    hero: 'photos/recipe-sourdough.png',
+    category: 'bread',
+    tags: ['sourdough'],
+    desc: 'A rustic sourdough with an open crumb, crackling crust and deep tangy flavour. Uses an active starter for a natural rise — no commercial yeast.',
+    prep: '30m',
+    rest: '24h',
+    makes: 'Makes 1 loaf',
+    hasColdFerment: true,
+    ingredients: [
+      { name: 'Bread Flour',           amount: '500g', icon: 'flour' },
+      { name: 'Water (room temp)',     amount: '375g', icon: 'water' },
+      { name: 'Active Sourdough Starter', amount: '100g', icon: 'starter' },
+      { name: 'Salt',                  amount: '10g',  icon: 'salt' }
+    ],
+    method: [
+      'Ensure your starter is active and bubbly — fed 4–8 hours before mixing. It should float in water.',
+      'Combine flour and water in a bowl. Mix until no dry flour remains. Rest 45 minutes (autolyse).',
+      'Add starter and salt. Pinch and fold to incorporate fully into the dough.',
+      'Bulk ferment 4–6 hours at room temperature. Perform 4 sets of stretch and folds every 30 minutes in the first 2 hours.',
+      'Turn dough onto a lightly floured surface. Pre-shape into a tight round. Rest 20 minutes uncovered.',
+      'Final shape into a boule. Place seam-up in a floured banneton or bowl lined with a floured tea towel.',
+      'Cold retard in fridge for 12–16 hours. Overnight works perfectly.',
+      'Preheat Dutch oven with lid at 250°C (485°F) for 45 minutes.',
+      'Turn dough onto parchment. Score decisively with a lame or razor blade — one clean cut works.',
+      'Lower into Dutch oven, cover with lid. Bake 25 minutes covered.',
+      'Uncover, reduce to 230°C (450°F). Bake 20–25 more minutes until deeply golden brown.',
+      'Cool on a wire rack for at least 1 hour before slicing — patience rewards you with a better crumb.'
+    ],
+    steps: [
+      { name: 'Mix + autolyse',        minutes: 55,   tempSensitive: false },
+      { name: 'Add starter & salt',    minutes: 10,   tempSensitive: false },
+      { name: 'Bulk fermentation',     minutes: 300,  tempSensitive: true  },
+      { name: 'Pre-shape & rest',      minutes: 30,   tempSensitive: false },
+      { name: 'Final shape',           minutes: 10,   tempSensitive: false },
+      { name: 'Cold retard',           minutes: 840,  tempSensitive: false, coldFerment: true },
+      { name: 'Preheat oven',          minutes: 45,   tempSensitive: false, parallel: true },
+      { name: 'Bake',                  minutes: 50,   tempSensitive: false }
+    ]
+  },
+  wholewheat: {
+    title: 'Whole Wheat',
+    accent: 'Sandwich Bread',
+    hero: 'photos/recipe-wholewheat.png',
+    category: 'bread',
+    desc: 'Soft, wholesome and perfect for everyday sandwiches. A gentle honey sweetness balances the nutty whole wheat.',
+    prep: '25m',
+    rest: '3h',
+    makes: 'Makes 1 loaf',
+    hasColdFerment: false,
+    ingredients: [
+      { name: 'Whole Wheat Flour',  amount: '360g',  icon: 'flour' },
+      { name: 'Warm Water',         amount: '295g',  icon: 'water' },
+      { name: 'Honey',              amount: '30g',   icon: 'honey' },
+      { name: 'Olive Oil',          amount: '30g',   icon: 'oil' },
+      { name: 'Salt',               amount: '9g',    icon: 'salt' },
+      { name: 'Instant Yeast',      amount: '7g',    icon: 'yeast' }
+    ],
+    method: [
+      'Combine warm water, honey, and yeast in a bowl. Let sit 5 minutes until foamy.',
+      'Add flour, olive oil, and salt. Mix until dough comes together.',
+      'Knead by hand for 8–10 minutes until smooth and elastic. The dough should feel tacky but not sticky.',
+      'Place in an oiled bowl, cover, and rise until doubled — about 90 minutes.',
+      'Gently deflate. Shape into a log and place in an oiled 9×5 inch loaf tin, seam-side down.',
+      'Cover and proof for 60 minutes until dough rises 1 inch above the tin.',
+      'Preheat oven to 190°C (375°F).',
+      'Bake for 35–40 minutes until deep golden and internal temperature reaches 96°C.',
+      'Turn out onto a wire rack. Cool 30 minutes before slicing.'
+    ],
+    steps: [
+      { name: 'Mix and knead',      minutes: 20,  tempSensitive: false },
+      { name: 'Bulk fermentation',  minutes: 90,  tempSensitive: true  },
+      { name: 'Shape loaf',         minutes: 10,  tempSensitive: false },
+      { name: 'Preheat oven',       minutes: 30,  tempSensitive: false, parallel: true },
+      { name: 'Final proof',        minutes: 60,  tempSensitive: true  },
+      { name: 'Bake',               minutes: 35,  tempSensitive: false }
+    ]
+  }
+};
+
+const ING_ICONS = {
+  flour: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6 L14 6 L13 15 L5 15 Z"/><path d="M6 6 L6 3 L12 3 L12 6"/></svg>',
+  water: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2 C9 2 4 8 4 12 A5 5 0 0 0 14 12 C14 8 9 2 9 2 Z"/></svg>',
+  salt:  '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4 L12 4 L11 14 L7 14 Z"/><circle cx="8" cy="8" r="0.4" fill="currentColor"/><circle cx="10" cy="10" r="0.4" fill="currentColor"/><circle cx="9" cy="12" r="0.4" fill="currentColor"/></svg>',
+  yeast: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6"/><circle cx="7" cy="8" r="0.8" fill="currentColor"/><circle cx="11" cy="10" r="0.8" fill="currentColor"/><circle cx="9" cy="12" r="0.8" fill="currentColor"/></svg>',
+  honey: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3 L12 3 L14 7 L12 15 L6 15 L4 7 Z"/></svg>',
+  oil:   '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3 L11 3 L11 6 L13 6 L13 15 L5 15 L5 6 L7 6 Z"/></svg>',
+  starter: '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6 L13 6 L12 15 L6 15 Z"/><circle cx="8" cy="9" r="0.6" fill="currentColor"/><circle cx="10" cy="11" r="0.6" fill="currentColor"/><circle cx="9" cy="13" r="0.6" fill="currentColor"/><path d="M6 6 L6 3 L12 3 L12 6"/></svg>'
+};
+
+// ============================================================
+// Router
+// ============================================================
+function go(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById('screen-' + screen).classList.remove('hidden');
+  const nav = document.getElementById('nav');
+  const hideNavOn = ['splash', 'recipe-detail', 'wizard-target', 'wizard-conditions', 'wizard-preview', 'timer', 'bake-log'];
+  nav.style.display = hideNavOn.includes(screen) ? 'none' : 'grid';
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.screen === screen);
+  });
+  if (screen === 'home') refreshHomeContinue();
+  if (screen === 'timers') renderBakes();
+  if (screen === 'profile') refreshProfile();
+  window.scrollTo(0, 0);
+}
+
+let calcState = { balls: 2, size: '12' };
+
+function openRecipe(id) {
+  const r = RECIPES[id];
+  if (!r) return;
+  wizard.recipeId = id;
+  document.getElementById('rd-hero').style.backgroundImage = `url('${r.hero}')`;
+  document.getElementById('rd-title').innerHTML = `${r.title} <span class="accent">${r.accent}</span>`;
+  document.getElementById('rd-desc').textContent = r.desc;
+  document.getElementById('rd-prep').textContent = r.prep;
+  document.getElementById('rd-rest').textContent = r.rest;
+
+  // Calculator setup for pizza recipes
+  const calcEl = document.getElementById('rd-calculator');
+  if (r.calculator) {
+    calcState.balls = r.calculator.defaultBalls;
+    calcState.size = r.calculator.defaultSize;
+    // Build ball pills
+    document.getElementById('calc-balls-row').innerHTML = [2, 4, 6, 8].map(n =>
+      `<button class="calc-pill ${n === calcState.balls ? 'active' : ''}" onclick="setCalcBalls(${n})">${n}</button>`
+    ).join('');
+    // Build size pills based on this recipe's available sizes
+    document.getElementById('calc-size-row').innerHTML = Object.keys(r.calculator.ballWeights).map(s =>
+      `<button class="calc-pill ${s === calcState.size ? 'active' : ''}" onclick="setCalcSize('${s}')">${s}"</button>`
+    ).join('');
+    calcEl.style.display = 'block';
+  } else {
+    calcEl.style.display = 'none';
+  }
+
+  renderRecipeAmounts(r);
+
+  // Method
+  document.getElementById('rd-method-list').innerHTML = (r.method || []).map(step =>
+    `<li>${step}</li>`
+  ).join('');
+
+  go('recipe-detail');
+}
+
+function renderRecipeAmounts(r) {
+  // Ingredients
+  document.getElementById('rd-ingredients-list').innerHTML = r.ingredients.map(i => {
+    let amount;
+    if (i.calcKey && r.calculator) {
+      const calc = computeCalc(r);
+      amount = `${calc[i.calcKey]}${i.unit || 'g'}`;
+    } else {
+      amount = i.amount;
+    }
+    return `
+      <div class="ingredient-row">
+        <div class="ing-icon">${ING_ICONS[i.icon] || ING_ICONS.flour}</div>
+        <div class="ing-name">${i.name}</div>
+        <div class="ing-amount">${amount}</div>
+      </div>`;
+  }).join('');
+  // Makes text
+  if (r.calculator) {
+    document.getElementById('rd-makes').textContent =
+      `Makes ${calcState.balls} × ${calcState.size}" pizza${calcState.balls > 1 ? 's' : ''}`;
+  } else {
+    document.getElementById('rd-makes').textContent = r.makes;
+  }
+}
+
+function computeCalc(r) {
+  const c = r.calculator;
+  const totalDough = calcState.balls * c.ballWeights[calcState.size];
+  const totalPct = Object.values(c.bakersPct).reduce((a, b) => a + b, 0);
+  const flourAmount = totalDough / (totalPct / 100);
+  const result = {};
+  for (const key in c.bakersPct) {
+    const val = flourAmount * c.bakersPct[key] / 100;
+    // Round differently for tiny amounts (yeast, salt under 5g) vs large
+    result[key] = val < 5 ? Math.round(val * 10) / 10 : Math.round(val);
+  }
+  return result;
+}
+
+function setCalcBalls(n) {
+  calcState.balls = n;
+  document.querySelectorAll('#calc-balls-row .calc-pill').forEach(p => {
+    p.classList.toggle('active', parseInt(p.textContent) === n);
+  });
+  renderRecipeAmounts(RECIPES[wizard.recipeId]);
+}
+
+function setCalcSize(s) {
+  calcState.size = s;
+  document.querySelectorAll('#calc-size-row .calc-pill').forEach(p => {
+    p.classList.toggle('active', p.textContent === `${s}"`);
+  });
+  renderRecipeAmounts(RECIPES[wizard.recipeId]);
+}
+
+function filterRecipes(filter) {
+  document.querySelectorAll('#screen-recipes .tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.filter === filter);
+  });
+  document.querySelectorAll('#screen-recipes .recipe-card').forEach(card => {
+    const cat = card.dataset.category;
+    const tags = (card.dataset.tags || '').split(',');
+    const match = filter === 'all' || cat === filter || tags.includes(filter);
+    card.style.display = match ? 'flex' : 'none';
+  });
+}
+
+function openRecipesFiltered(filter) {
+  go('recipes');
+  filterRecipes(filter);
+}
+
+// ============================================================
+// Wizard state + timing engine
+// ============================================================
+const wizard = {
+  recipeId: null,
+  targetTime: null,   // Date object
+  temp: 'normal',     // 'cool' | 'normal' | 'warm'
+  coldFerment: true
+};
+
+const TEMP_MULT = { cool: 1.5, normal: 1.0, warm: 0.65 };
+
+function formatTime(d) {
+  return d.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+function formatDay(d) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+  const dd = new Date(d); dd.setHours(0,0,0,0);
+  if (dd.getTime() === today.getTime()) return 'Today';
+  if (dd.getTime() === tomorrow.getTime()) return 'Tomorrow';
+  if (dd.getTime() === yesterday.getTime()) return 'Yesterday';
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+function formatDuration(mins) {
+  if (mins < 60) return `${mins}m`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+function defaultTargetToday7pm() {
+  const d = new Date();
+  d.setHours(19, 0, 0, 0);
+  if (d < new Date()) d.setDate(d.getDate() + 1);
+  return d;
+}
+function defaultTargetTomorrow7pm() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(19, 0, 0, 0);
+  return d;
+}
+function toDatetimeLocalStr(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function startWizard() {
+  const r = RECIPES[wizard.recipeId];
+  if (!r) return;
+  wizard.targetTime = defaultTargetToday7pm();
+  wizard.temp = 'normal';
+  wizard.coldFerment = true;
+
+  // Populate names + defaults
+  ['wt', 'wc', 'wp'].forEach(p => {
+    const el = document.getElementById(`${p}-recipe-name`);
+    if (el) el.textContent = `${r.title} ${r.accent}`;
+  });
+  document.getElementById('qp-tonight-time').textContent = formatTime(defaultTargetToday7pm());
+  document.getElementById('qp-tomorrow-time').textContent = formatTime(defaultTargetTomorrow7pm());
+  document.getElementById('target-datetime').value = toDatetimeLocalStr(wizard.targetTime);
+
+  // Preselect Tonight
+  document.querySelectorAll('#screen-wizard-target .quick-pick').forEach(el => {
+    el.classList.toggle('selected', el.dataset.target === 'tonight');
+  });
+
+  // Show cold ferment toggle only for recipes that support it
+  document.getElementById('cond-cold-ferment').style.display = r.hasColdFerment ? 'block' : 'none';
+
+  go('wizard-target');
+}
+
+function pickTarget(when) {
+  wizard.targetTime = when === 'tonight' ? defaultTargetToday7pm() : defaultTargetTomorrow7pm();
+  document.getElementById('target-datetime').value = toDatetimeLocalStr(wizard.targetTime);
+  document.querySelectorAll('#screen-wizard-target .quick-pick').forEach(el => {
+    el.classList.toggle('selected', el.dataset.target === when);
+  });
+}
+function pickTargetCustom(val) {
+  if (!val) return;
+  wizard.targetTime = new Date(val);
+  document.querySelectorAll('#screen-wizard-target .quick-pick').forEach(el => el.classList.remove('selected'));
+}
+function wizardStep2() {
+  if (!wizard.targetTime || wizard.targetTime <= new Date()) {
+    alert('Please pick a target time in the future.');
+    return;
+  }
+  go('wizard-conditions');
+}
+function pickTemp(t) {
+  wizard.temp = t;
+  document.querySelectorAll('#screen-wizard-conditions .cond-pill').forEach(el => {
+    el.classList.toggle('selected', el.dataset.temp === t);
+  });
+}
+function toggleCold() {
+  wizard.coldFerment = !wizard.coldFerment;
+  document.getElementById('toggle-cold').classList.toggle('on', wizard.coldFerment);
+}
+function wizardStep3() {
+  const timeline = computeTimeline();
+  renderTimeline(timeline);
+  go('wizard-preview');
+}
+
+// The core timing engine — walks steps backward from target time
+function computeTimeline() {
+  const r = RECIPES[wizard.recipeId];
+  const mult = TEMP_MULT[wizard.temp];
+
+  // Filter out cold-ferment steps if user opted out
+  const steps = r.steps.filter(s => !(s.coldFerment && !wizard.coldFerment));
+
+  // Apply temperature multiplier to sensitive steps
+  const timed = steps.map(s => ({
+    ...s,
+    adjMinutes: Math.round(s.minutes * (s.tempSensitive ? mult : 1))
+  }));
+
+  // Walk backward from target; skip parallel steps (they nest under prior)
+  let cursor = new Date(wizard.targetTime);
+  const timeline = [];
+  for (let i = timed.length - 1; i >= 0; i--) {
+    const step = timed[i];
+    if (step.parallel) continue;
+    timeline.unshift({
+      name: step.name,
+      startAt: new Date(cursor.getTime() - step.adjMinutes * 60000),
+      minutes: step.adjMinutes
+    });
+    cursor = new Date(cursor.getTime() - step.adjMinutes * 60000);
+  }
+  return timeline;
+}
+
+function renderTimeline(timeline) {
+  const start = timeline[0].startAt;
+  const end = wizard.targetTime;
+  const totalMins = Math.round((end - start) / 60000);
+
+  document.getElementById('wp-sub').textContent =
+    `${formatDay(start)} ${formatTime(start)} → ${formatDay(end)} ${formatTime(end)}`;
+  document.getElementById('tl-start').textContent = `${formatDay(start)} ${formatTime(start)}`;
+  document.getElementById('tl-total').textContent = formatDuration(totalMins);
+  document.getElementById('tl-end').textContent = `${formatDay(end)} ${formatTime(end)}`;
+
+  document.getElementById('tl-steps').innerHTML = timeline.map(step => `
+    <div class="tl-step">
+      <div class="time">${formatTime(step.startAt)}<small>${formatDay(step.startAt)}</small></div>
+      <div class="info">
+        <div class="name">${step.name}</div>
+        <div class="dur">${formatDuration(step.minutes)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// Active bake — state, ring, countdown, controls
+// ============================================================
+let activeBake = null;
+let timerInterval = null;
+let wakeLock = null;
+
+const STEP_TIPS = {
+  'Mix dough':          '<strong>Tip:</strong> Water should feel just warm — never hot. Mix until no dry flour remains.',
+  'Mix and knead':      '<strong>Tip:</strong> Knead until the dough is smooth and passes the windowpane test.',
+  'Bulk fermentation':  '<strong>Tip:</strong> 26–28°C is ideal. Avoid cold drafts — a warm oven with the light on works well.',
+  'Bulk (room temp)':   '<strong>Tip:</strong> Dough should nearly double and look puffy and alive.',
+  'Divide and ball':    '<strong>Tip:</strong> Use a bench scraper for clean cuts. Ball tightly with a smooth top.',
+  'Cold ferment':       '<strong>Tip:</strong> Place balls in an oiled sealed container. The fridge does all the work.',
+  'Shape':              '<strong>Tip:</strong> Handle gently — keep the air you built during bulk fermentation.',
+  'Shape loaf':         '<strong>Tip:</strong> Work on a lightly floured surface. Seal the seam well underneath.',
+  'Warm up on counter': '<strong>Tip:</strong> Cover with a damp cloth so a skin doesn\'t form on the dough.',
+  'Preheat oven':       '<strong>Tip:</strong> Get it screaming hot — high heat is the secret to a great crust.',
+  'Final proof':        '<strong>Tip:</strong> Poke test — dough should slowly spring back but leave a slight dent.',
+  'Bake':               '<strong>Tip:</strong> Steam early in the bake gives you maximum oven spring.',
+  'Stretch and bake':   '<strong>Tip:</strong> Stretch from the centre outward — leave a puffy crust ring.'
+};
+
+function startBaking() {
+  const timeline = computeTimeline();
+  const now = Date.now();
+
+  // If timeline start is in the past, shift the whole thing forward so it starts now
+  let firstStart = timeline[0].startAt.getTime();
+  let shift = 0;
+  if (firstStart < now) shift = now - firstStart;
+
+  activeBake = {
+    recipeId: wizard.recipeId,
+    startedAt: now,
+    targetTime: wizard.targetTime.getTime() + shift,
+    steps: timeline.map(s => ({
+      name: s.name,
+      minutes: s.minutes,
+      stepStartAt: s.startAt.getTime() + shift,
+      stepEndAt:   s.startAt.getTime() + shift + s.minutes * 60000,
+      completedAt: null
+    })),
+    currentStepIndex: 0,
+    pausedAt: null,
+    pauseAccumMs: 0
+  };
+  saveActiveBake();
+  requestWakeLock();
+  updateBackupAlarmCard();
+  openTimer();
+}
+
+function openTimer() {
+  if (!activeBake) return;
+  const r = RECIPES[activeBake.recipeId];
+  document.getElementById('timer-recipe-name').textContent = `${r.title} ${r.accent}`;
+  updateTimerScreen();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(updateTimerScreen, 500);
+  updateBackupAlarmCard();
+  go('timer');
+}
+
+function updateTimerScreen() {
+  if (!activeBake) return;
+  const idx = activeBake.currentStepIndex;
+  const step = activeBake.steps[idx];
+  if (!step) { completeBake(); return; }
+
+  const total = activeBake.steps.length;
+  document.getElementById('timer-step-num').textContent = `Step ${idx + 1} of ${total}`;
+  document.getElementById('timer-step-name').textContent = step.name;
+  document.getElementById('timer-instruction').textContent = getStepInstruction(step.name);
+  document.getElementById('tip-text').innerHTML = STEP_TIPS[step.name] || '<strong>Tip:</strong> Take your time and trust the dough.';
+  document.getElementById('timer-progress-label').textContent = `Step ${idx + 1} of ${total}`;
+  updateBackupAlarmCard();
+
+  // Compute remaining time — always from real timestamps, never setInterval count
+  const now = Date.now();
+  const pauseOffset = activeBake.pausedAt ? (now - activeBake.pausedAt) : 0;
+  const effectiveEnd = step.stepEndAt + activeBake.pauseAccumMs + pauseOffset;
+  const remainingMs = Math.max(0, effectiveEnd - now);
+  const totalMs = step.minutes * 60000;
+  const progress = totalMs > 0 ? Math.max(0, Math.min(1, (totalMs - remainingMs) / totalMs)) : 1;
+
+  // Ring
+  const CIRC = 2 * Math.PI * 110;
+  const ring = document.getElementById('ring-progress');
+  ring.setAttribute('stroke-dashoffset', CIRC * (1 - progress));
+  ring.classList.toggle('done', remainingMs === 0);
+  ring.classList.toggle('paused', !!activeBake.pausedAt);
+
+  // Time text
+  document.getElementById('ring-time').textContent = formatRemaining(remainingMs);
+  const tH = Math.floor(step.minutes / 60);
+  const tM = step.minutes % 60;
+  document.getElementById('ring-target').textContent =
+    `Target: ${tH > 0 ? tH + 'h ' : ''}${String(tM).padStart(2, '0')}m`;
+
+  // Overall progress bar
+  const overall = (idx + progress) / total;
+  document.getElementById('timer-progress-fill').style.width = `${overall * 100}%`;
+
+  // Pause/Done button
+  const pauseBtn = document.getElementById('pause-btn');
+  if (remainingMs === 0 && !activeBake.pausedAt) {
+    pauseBtn.textContent = 'Mark Done →';
+    pauseBtn.onclick = markStepDone;
+  } else {
+    pauseBtn.textContent = activeBake.pausedAt ? 'Resume Timer' : 'Pause Timer';
+    pauseBtn.onclick = togglePause;
+  }
+}
+
+function formatRemaining(ms) {
+  if (ms <= 0) return 'Done!';
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if (h > 0) return `${h}h ${String(m).padStart(2, '0')}m`;
+  if (m > 0) return `${m}m ${String(s).padStart(2, '0')}s`;
+  return `${s}s`;
+}
+
+function getStepInstruction(name) {
+  const INSTR = {
+    'Mix dough':          'Combine flour, water, salt and yeast until no dry flour remains. No kneading needed.',
+    'Mix and knead':      'Mix the ingredients, then knead until smooth and elastic — about 10 minutes by hand.',
+    'Bulk fermentation':  'Let the dough rest and rise in a warm spot until nearly doubled and puffy.',
+    'Bulk (room temp)':   'Cover and rest at room temperature. The dough should look alive and puffy.',
+    'Divide and ball':    'Divide the dough evenly, then ball each piece with a tight, smooth top.',
+    'Cold ferment':       'Place balls in a sealed oiled container in the fridge. Deep flavour develops here.',
+    'Shape':              'Gently pre-shape, rest 15 min, then final shape. Handle the dough with care.',
+    'Shape loaf':         'Shape into a tight log or boule and place seam-side down.',
+    'Warm up on counter': 'Bring dough back to room temp before stretching. Cover to prevent skin forming.',
+    'Preheat oven':       'Preheat oven to full temperature. Get your stone or Dutch oven scorching hot.',
+    'Final proof':        'Let the shaped dough rise until it passes the poke test — slow spring back.',
+    'Bake':               'Bake until crust is deep golden brown. Add steam for the first 20 minutes.',
+    'Stretch and bake':   'Stretch dough onto a peel, top, and slide onto the hot surface. Bake fast and hot.'
+  };
+  return INSTR[name] || 'Follow the recipe and trust your instincts.';
+}
+
+function togglePause() {
+  if (!activeBake) return;
+  const now = Date.now();
+  if (activeBake.pausedAt) {
+    activeBake.pauseAccumMs += now - activeBake.pausedAt;
+    activeBake.pausedAt = null;
+    requestWakeLock();
+    updateBackupAlarmCard();
+  } else {
+    activeBake.pausedAt = now;
+    releaseWakeLock();
+
+  }
+  saveActiveBake();
+  updateTimerScreen();
+}
+
+function skipStep() {
+  if (!activeBake) return;
+  if (!confirm('Skip this step? The rest of your timeline will adjust.')) return;
+  markStepDone();
+}
+
+function markStepDone() {
+  if (!activeBake) return;
+  const now = Date.now();
+  const idx = activeBake.currentStepIndex;
+  activeBake.steps[idx].completedAt = now;
+
+  if (idx + 1 < activeBake.steps.length) {
+    // Ripple: next step starts NOW, everything after shifts
+    const oldNextStart = activeBake.steps[idx + 1].stepStartAt;
+    const shift = now - oldNextStart;
+    for (let i = idx + 1; i < activeBake.steps.length; i++) {
+      activeBake.steps[i].stepStartAt += shift;
+      activeBake.steps[i].stepEndAt += shift;
+    }
+    activeBake.targetTime += shift;
+    activeBake.currentStepIndex++;
+    activeBake.pauseAccumMs = 0;
+    activeBake.pausedAt = null;
+    saveActiveBake();
+    updateBackupAlarmCard();
+    updateTimerScreen();
+  } else {
+    completeBake();
+  }
+}
+
+function nudgeStep(mins) {
+  if (!activeBake) return;
+  const idx = activeBake.currentStepIndex;
+  const shift = mins * 60000;
+  activeBake.steps[idx].stepEndAt += shift;
+  activeBake.steps[idx].minutes = Math.max(1, activeBake.steps[idx].minutes + mins);
+  for (let i = idx + 1; i < activeBake.steps.length; i++) {
+    activeBake.steps[i].stepStartAt += shift;
+    activeBake.steps[i].stepEndAt += shift;
+  }
+  activeBake.targetTime += shift;
+  saveActiveBake();
+  updateBackupAlarmCard();
+  updateTimerScreen();
+}
+
+let pendingBakeLog = null;
+let currentStars = 0;
+
+function completeBake() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  releaseWakeLock();
+
+  const r = RECIPES[activeBake.recipeId];
+  pendingBakeLog = {
+    recipeId: activeBake.recipeId,
+    title: `${r.title} ${r.accent}`,
+    hero: r.hero,
+    startedAt: activeBake.startedAt,
+    completedAt: Date.now(),
+    stepsCount: activeBake.steps.length
+  };
+  localStorage.removeItem('doughcraft-active-bake');
+  activeBake = null;
+  openBakeLog();
+}
+
+function openBakeLog() {
+  if (!pendingBakeLog) return;
+  document.getElementById('bl-hero').style.backgroundImage = `url('${pendingBakeLog.hero}')`;
+  document.getElementById('bl-title').textContent = pendingBakeLog.title;
+  document.getElementById('bl-notes').value = '';
+  currentStars = 0;
+  updateStarUI();
+  go('bake-log');
+}
+
+function setStars(n) {
+  currentStars = n === currentStars ? 0 : n;
+  updateStarUI();
+}
+
+function updateStarUI() {
+  document.querySelectorAll('#bl-stars .star').forEach(el => {
+    const val = parseInt(el.dataset.val);
+    el.classList.toggle('filled', val <= currentStars);
+  });
+}
+
+function saveBakeLog() {
+  if (!pendingBakeLog) return;
+  const history = getBakeHistory();
+  history.unshift({
+    ...pendingBakeLog,
+    rating: currentStars,
+    notes: document.getElementById('bl-notes').value.trim()
+  });
+  localStorage.setItem('doughcraft-bake-history', JSON.stringify(history.slice(0, 100)));
+  pendingBakeLog = null;
+  currentStars = 0;
+  go('timers');
+}
+
+function skipBakeLog() {
+  if (!pendingBakeLog) return;
+  const history = getBakeHistory();
+  history.unshift({ ...pendingBakeLog, rating: 0, notes: '' });
+  localStorage.setItem('doughcraft-bake-history', JSON.stringify(history.slice(0, 100)));
+  pendingBakeLog = null;
+  currentStars = 0;
+  go('home');
+}
+
+function getBakeHistory() {
+  try {
+    return JSON.parse(localStorage.getItem('doughcraft-bake-history') || '[]');
+  } catch (e) { return []; }
+}
+
+function closeTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  releaseWakeLock();
+  // Notifications continue firing in background even when timer screen closed
+  go('home');
+}
+
+function saveActiveBake() {
+  if (activeBake) localStorage.setItem('doughcraft-active-bake', JSON.stringify(activeBake));
+}
+
+function loadActiveBake() {
+  try {
+    const saved = localStorage.getItem('doughcraft-active-bake');
+    if (saved) activeBake = JSON.parse(saved);
+  } catch (e) {}
+}
+
+function refreshHomeContinue() {
+  const homeScreen = document.getElementById('screen-home');
+  const existing = homeScreen.querySelector('.continue-card');
+  if (existing) existing.remove();
+  const empty = homeScreen.querySelector('.empty-state');
+  if (!empty) return;
+
+  if (activeBake && RECIPES[activeBake.recipeId]) {
+    const r = RECIPES[activeBake.recipeId];
+    const idx = activeBake.currentStepIndex;
+    const step = activeBake.steps[idx];
+    const now = Date.now();
+    const pauseOffset = activeBake.pausedAt ? (now - activeBake.pausedAt) : 0;
+    const remMs = Math.max(0, step.stepEndAt + activeBake.pauseAccumMs + pauseOffset - now);
+    const stepProgress = 1 - remMs / (step.minutes * 60000);
+    const overall = Math.round(((idx + Math.max(0, Math.min(1, stepProgress))) / activeBake.steps.length) * 100);
+    const remMins = Math.round(remMs / 60000);
+    const remH = Math.floor(remMins / 60);
+    const remLabel = remH > 0 ? `${remH}h ${remMins % 60}m left` : `${remMins}m left`;
+
+    const CIRC = 2 * Math.PI * 18;
+    const card = document.createElement('div');
+    card.className = 'continue-card';
+    card.onclick = () => openTimer();
+    card.innerHTML = `
+      <div class="thumb" style="background-image: url('${r.hero}')"></div>
+      <div class="info">
+        <h4>${r.title} ${r.accent}</h4>
+        <p>${step.name} · ${remLabel}</p>
+      </div>
+      <div class="ring-mini">
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="18" fill="none" stroke="#D6DDCB" stroke-width="4" opacity="0.5"/>
+          <circle cx="22" cy="22" r="18" fill="none" stroke="#8A9A7B" stroke-width="4" stroke-linecap="round"
+            stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC * (1 - overall/100)}"/>
+        </svg>
+        <div class="pct">${overall}%</div>
+      </div>
+    `;
+    empty.style.display = 'none';
+    empty.parentNode.insertBefore(card, empty);
+  } else {
+    empty.style.display = 'block';
+  }
+}
+
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (e) {}
+}
+function releaseWakeLock() {
+  if (wakeLock) { try { wakeLock.release(); } catch (e) {} wakeLock = null; }
+}
+
+// ============================================================
+// Backup alarm — shown for steps > 2 hours
+// ============================================================
+function updateBackupAlarmCard() {
+  const card = document.getElementById('alarm-card');
+  if (!activeBake || !card) return;
+  const step = activeBake.steps[activeBake.currentStepIndex];
+  if (!step) { card.style.display = 'none'; return; }
+
+  // Show only for steps longer than 2 hours
+  if (step.minutes < 120) {
+    card.style.display = 'none';
+    return;
+  }
+
+  const endTime = new Date(step.stepEndAt + activeBake.pauseAccumMs);
+  const timeStr = endTime.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById('alarm-time').textContent = `${timeStr} (${formatDay(endTime)})`;
+  document.getElementById('alarm-btn-time').textContent = timeStr;
+  card.style.display = 'flex';
+}
+
+function setBackupAlarm() {
+  if (!activeBake) return;
+  const step = activeBake.steps[activeBake.currentStepIndex];
+  const endTime = new Date(step.stepEndAt + activeBake.pauseAccumMs);
+  const hh = String(endTime.getHours()).padStart(2, '0');
+  const mm = String(endTime.getMinutes()).padStart(2, '0');
+  const timeStr = endTime.toLocaleTimeString('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true });
+  const stepName = step.name;
+
+  // Try Android alarm intent — opens Clock app pre-filled
+  const androidUA = /Android/i.test(navigator.userAgent);
+  if (androidUA) {
+    // Intent URL scheme for Android alarm
+    const url = `intent://alarm/setalarm?hour=${endTime.getHours()}&minutes=${endTime.getMinutes()}&message=${encodeURIComponent('DoughCraft: ' + stepName)}#Intent;scheme=android-app;package=com.android.deskclock;end`;
+    window.location.href = url;
+    // Fallback message after short delay if intent doesn't fire
+    setTimeout(() => {
+      alert(`Couldn't open your Clock app automatically. Set a manual alarm for ${timeStr} — "${stepName}".`);
+    }, 800);
+  } else {
+    // iOS and everything else — show clear instructions to set manually
+    alert(`Set a phone alarm for:\n\n${hh}:${mm} — "${stepName}"\n\nOpen your Clock app and add this alarm so you don't miss the step.`);
+  }
+}
+
+// ============================================================
+// Onboarding + backup
+// ============================================================
+function completeOnboarding() {
+  localStorage.setItem('doughcraft-onboarded', '1');
+  go('home');
+}
+
+function exportJournal() {
+  const data = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    activeBake: activeBake,
+    settings: {
+      onboarded: !!localStorage.getItem('doughcraft-onboarded')
+    }
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `doughcraft-backup-${new Date().toISOString().split('T')[0]}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function handleImportFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.version) throw new Error('Not a DoughCraft backup');
+      if (!confirm('Importing will replace your current data. Continue?')) {
+        input.value = '';
+        return;
+      }
+      if (data.activeBake) {
+        localStorage.setItem('doughcraft-active-bake', JSON.stringify(data.activeBake));
+        activeBake = data.activeBake;
+      } else {
+        localStorage.removeItem('doughcraft-active-bake');
+        activeBake = null;
+      }
+      if (data.settings && data.settings.onboarded) {
+        localStorage.setItem('doughcraft-onboarded', '1');
+      }
+      refreshHomeContinue();
+      alert('Backup imported successfully.');
+      input.value = '';
+    } catch (err) {
+      alert('That file doesn\'t look like a DoughCraft backup. Please try another.');
+      input.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ============================================================
+// Learn — expandable content
+// ============================================================
+function toggleLearn(item) {
+  const body = item.nextElementSibling;
+  const wasOpen = item.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.learn-item.open').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.learn-body.open').forEach(el => el.classList.remove('open'));
+  // Open this one if it wasn't already
+  if (!wasOpen) {
+    item.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+// ============================================================
+// Your Bakes — active + history
+// ============================================================
+function renderBakes() {
+  const activeSection = document.getElementById('bakes-active-section');
+  const activeList = document.getElementById('bakes-active');
+  const history = getBakeHistory();
+  const historyList = document.getElementById('bakes-history');
+  const empty = document.getElementById('bakes-empty');
+
+  // Active bake card
+  if (activeBake && RECIPES[activeBake.recipeId]) {
+    const r = RECIPES[activeBake.recipeId];
+    const idx = activeBake.currentStepIndex;
+    const step = activeBake.steps[idx];
+    const now = Date.now();
+    const pauseOffset = activeBake.pausedAt ? (now - activeBake.pausedAt) : 0;
+    const remMs = Math.max(0, step.stepEndAt + activeBake.pauseAccumMs + pauseOffset - now);
+    const stepProgress = 1 - remMs / (step.minutes * 60000);
+    const overall = Math.round(((idx + Math.max(0, Math.min(1, stepProgress))) / activeBake.steps.length) * 100);
+    const CIRC = 2 * Math.PI * 18;
+    activeList.innerHTML = `
+      <div class="continue-card" onclick="openTimer()">
+        <div class="thumb" style="background-image: url('${r.hero}')"></div>
+        <div class="info">
+          <h4>${r.title} ${r.accent}</h4>
+          <p>${step.name} · Step ${idx + 1} of ${activeBake.steps.length}</p>
+        </div>
+        <div class="ring-mini">
+          <svg width="44" height="44" viewBox="0 0 44 44">
+            <circle cx="22" cy="22" r="18" fill="none" stroke="#D6DDCB" stroke-width="4" opacity="0.5"/>
+            <circle cx="22" cy="22" r="18" fill="none" stroke="#8A9A7B" stroke-width="4" stroke-linecap="round"
+              stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC * (1 - overall / 100)}"/>
+          </svg>
+          <div class="pct">${overall}%</div>
+        </div>
+      </div>`;
+    activeSection.style.display = 'block';
+  } else {
+    activeSection.style.display = 'none';
+  }
+
+  // History
+  if (history.length > 0) {
+    empty.style.display = 'none';
+    const starSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 L15 9 L22 9.5 L17 14.5 L18.5 22 L12 18 L5.5 22 L7 14.5 L2 9.5 L9 9 Z"/></svg>';
+    historyList.innerHTML = history.map(bake => {
+      const r = RECIPES[bake.recipeId];
+      const hero = r ? r.hero : (bake.hero || '');
+      const date = new Date(bake.completedAt);
+      const dateStr = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      const starsHTML = bake.rating > 0
+        ? `<div class="history-stars">${starSVG.repeat(bake.rating)}</div>`
+        : '';
+      const notesHTML = bake.notes ? `<div class="history-notes-preview">"${bake.notes}"</div>` : '';
+      return `
+        <div class="continue-card" style="cursor:default">
+          <div class="thumb" style="background-image: url('${hero}')"></div>
+          <div class="info">
+            <h4>${bake.title}</h4>
+            <p>${dateStr}${starsHTML ? ' ' + starsHTML : ''}</p>
+            ${notesHTML}
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sage)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>`;
+    }).join('');
+  } else {
+    historyList.innerHTML = '';
+    empty.style.display = 'block';
+  }
+}
+
+// ============================================================
+// Profile — settings toggles
+// ============================================================
+const SETTINGS = {
+  get tempUnit() { return localStorage.getItem('doughcraft-temp-unit') || 'celsius'; },
+  set tempUnit(v) { localStorage.setItem('doughcraft-temp-unit', v); },
+  get notifications() { return localStorage.getItem('doughcraft-notifications') === 'on'; },
+  set notifications(v) { localStorage.setItem('doughcraft-notifications', v ? 'on' : 'off'); }
+};
+
+function refreshProfile() {
+  document.getElementById('settings-temp-value').textContent =
+    SETTINGS.tempUnit === 'celsius' ? 'Celsius (°C)' : 'Fahrenheit (°F)';
+  document.getElementById('settings-notif-value').textContent =
+    SETTINGS.notifications ? 'On' : 'Off';
+  const history = getBakeHistory();
+  const profP = document.querySelector('#screen-profile .profile-header p');
+  if (profP) profP.textContent = `${history.length} bake${history.length === 1 ? '' : 's'} logged`;
+}
+
+function toggleTempUnit() {
+  SETTINGS.tempUnit = SETTINGS.tempUnit === 'celsius' ? 'fahrenheit' : 'celsius';
+  refreshProfile();
+}
+
+async function toggleNotifications() {
+  // deprecated — kept as no-op so any stale references don't crash
+  return;
+}
+
+function showAbout() {
+  alert('DoughCraft v1.0.0\n\nBread & Pizza. Made Simple.\n\nDoughCraft plans your bake timeline, walks you through each step, and calculates dough for any batch size. For long overnight ferments, set a phone alarm as backup — the app can\'t wake your phone.\n\nBuilt by FaoiteApps.\n\nYour data stays on your device — no accounts, no cloud, no ads.');
+}
+
+// Init on load
+loadActiveBake();
+refreshHomeContinue();
+if (localStorage.getItem('doughcraft-onboarded')) {
+  go('home');
+}
+</script>
+</body>
+</html>
